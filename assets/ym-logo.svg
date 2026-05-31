@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" role="img" aria-label="YM monogram — Yashi Mishra">
+  <defs>
+    <linearGradient id="ymg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7c7cff"/>
+      <stop offset="55%" stop-color="#a779ff"/>
+      <stop offset="100%" stop-color="#36d6f5"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke="url(#ymg)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <!-- M -->
+    <path d="M24 80 L24 30 L50 62 L76 30 L76 80"/>
+    <!-- M serifs -->
+    <path d="M16 80 H32"/>
+    <path d="M68 80 H84"/>
+    <!-- Y arms -->
+    <path d="M34 30 L50 50"/>
+    <path d="M66 30 L50 50"/>
+    <!-- Y arm serifs -->
+    <path d="M27 30 H41"/>
+    <path d="M59 30 H73"/>
+    <!-- Y stem through the M -->
+    <path d="M50 50 L50 84"/>
+    <!-- decorative flourish curl -->
+    <path d="M50 84 c -12 2 -13 14 -3 17 c 9 2 14 -5 9 -13" stroke-width="6"/>
+  </g>
+</svg>

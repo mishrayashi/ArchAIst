@@ -1,0 +1,17 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node (not used at runtime, but just in case)
+node_modules/
+
+# Keep tools/build_baseline.json — it is the parity snapshot used by verify.js

@@ -1,0 +1,11 @@
+# Keep everything LF so the build is byte-for-byte identical across OSes
+# (critical on Windows, where editors/git may otherwise switch to CRLF).
+* text=auto eol=lf
+
+source/**/*.md   text eol=lf
+source/**/*.json text eol=lf
+content/*.js     text eol=lf
+assets/**        text eol=lf
+*.html           text eol=lf
+*.py             text eol=lf
+*.js             text eol=lf

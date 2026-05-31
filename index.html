@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArchAIst — from zero to AI architect</title>
+  <meta name="description" content="ArchAIst — learn data engineering, AI, GenAI and LLM engineering from absolute zero. Interactive lessons, roadmaps, a built-in code runner, and company-wise interview prep." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237c7cff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 7l7-4 7 4v10l-7 4-7-4z'/%3E%3Cpath d='M12 3v18M5 7l7 4 7-4'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <!-- reading progress -->
+  <div class="read-progress" id="readProgress"></div>
+
+  <!-- shared SVG defs (gradient for completion ring) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#7c7cff" />
+        <stop offset="100%" stop-color="#36d6f5" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Toggle menu">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <a class="brand" href="#/home">
+      <span class="brand-mark">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7l7-4 7 4v10l-7 4-7-4z"/><path d="M12 3v18M5 7l7 4 7-4"/></svg>
+      </span>
+      <span class="brand-text">
+        <strong>Arch<span class="brand-ai">AI</span>st</strong>
+        <em>from zero to AI architect</em>
+      </span>
+    </a>
+    <div class="search-wrap">
+      <svg class="ic search-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input id="globalSearch" type="search" placeholder="Search lessons, terms, interview questions…   ( / )" autocomplete="off" />
+      <div id="searchResults" class="search-results" hidden></div>
+    </div>
+    <button class="icon-btn" id="themeToggle" aria-label="Toggle theme" title="Toggle theme"></button>
+  </header>
+
+  <div class="layout">
+    <!-- Sidebar navigation -->
+    <aside class="sidebar" id="sidebar">
+      <nav id="nav" class="nav"></nav>
+      <div class="sidebar-foot">
+        <div class="progress-mini">
+          <div class="progress-mini-label">Your progress</div>
+          <div class="progress-bar"><div class="progress-bar-fill" id="globalProgressFill"></div></div>
+          <div class="progress-mini-num" id="globalProgressNum">0%</div>
+        </div>
+        <button class="reset-btn" id="resetProgress" title="Clear saved progress">Reset progress</button>
+        <div class="sidebar-credit">
+          <img src="assets/ym-logo.svg" alt="YM" width="18" height="18" class="ym-mark" />
+          <span>Created by <strong>Yashi Mishra</strong></span>
+        </div>
+      </div>
+    </aside>
+    <div class="scrim" id="scrim"></div>
+
+    <!-- Main content -->
+    <main class="main" id="main">
+      <article id="view" class="view"></article>
+      <footer class="page-foot">
+        <span class="credit">
+          <img src="assets/ym-logo.svg" alt="YM — Yashi Mishra" width="22" height="22" class="ym-mark" />
+          Created by <strong>Yashi Mishra</strong> · ArchAIst — built to take anyone from zero to AI architect.
+        </span>
+      </footer>
+    </main>
+  </div>
+
+  <!-- engine -->
+  <script src="assets/js/md.js"></script>
+  <script src="assets/js/icons.js"></script>
+  <script src="assets/js/registry.js"></script>
+
+  <!-- content modules (each registers into LP) -->
+  <script src="content/foundations.js"></script>
+  <script src="content/roles.js"></script>
+  <script src="content/roadmaps.js"></script>
+  <script src="content/role-tracks.js"></script>
+  <script src="content/module-python.js"></script>
+  <script src="content/module-sql.js"></script>
+  <script src="content/module-data-modeling.js"></script>
+  <script src="content/module-etl.js"></script>
+  <script src="content/module-spark.js"></script>
+  <script src="content/module-cloud.js"></script>
+  <script src="content/module-orchestration.js"></script>
+  <script src="content/module-warehouse.js"></script>
+  <script src="content/module-streaming.js"></script>
+  <script src="content/module-genai.js"></script>
+  <script src="content/concepts.js"></script>
+  <script src="content/concepts-extra.js"></script>
+  <script src="content/glossary.js"></script>
+  <script src="content/interview-questions.js"></script>
+  <script src="content/companies.js"></script>
+  <script src="content/companies-extra.js"></script>
+
+  <!-- interactive widgets + app (last) -->
+  <script src="assets/js/widgets.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/runner.js"></script>
+</body>
+</html>

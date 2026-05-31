@@ -1,0 +1,796 @@
+[
+  {
+    "q": "Walmart: Given sales data, write SQL to find the top-selling product per category.",
+    "a": "Classic 'top-N per group' with a window function:\n```sql\nWITH ranked AS (\n  SELECT category, product, SUM(qty) AS units,\n         ROW_NUMBER() OVER (PARTITION BY category ORDER BY SUM(qty) DESC) AS rn\n  FROM sales GROUP BY category, product)\nSELECT category, product, units FROM ranked WHERE rn = 1;\n```\nUse `RANK()` instead if you want ties to share the top spot.",
+    "topic": "SQL",
+    "difficulty": "medium",
+    "companies": [
+      "Walmart"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Walmart: How would you optimise a slow Spark job joining a huge fact table to a small lookup?",
+    "a": "**Broadcast** the small lookup so there's no big shuffle: `fact.join(broadcast(lookup), 'key')`. Also: filter/select columns before the join, ensure good partition sizes, check for **skew** on the join key (salt if needed), enable AQE, and persist the lookup if reused. Verify with the Spark UI that the shuffle shrank.",
+    "topic": "Spark",
+    "difficulty": "hard",
+    "companies": [
+      "Walmart"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Walmart: Design a pipeline for real-time inventory across thousands of stores.",
+    "a": "Clarify latency/consistency needs. **HLD**: store events → **Kafka** (partitioned by store/SKU) → stream processor (**Flink/Spark Streaming**) updating current inventory in a fast store, plus land raw to the lake (Bronze) for analytics. Warehouse Gold marts for reporting. **Trade-off**: inventory needs near-real-time + correctness, so lean CP for the authoritative count; serve analytics from the lakehouse. Address exactly-once, idempotency, and skew on hot SKUs.",
+    "topic": "System Design",
+    "difficulty": "hard",
+    "companies": [
+      "Walmart"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Walmart: Design a star schema for retail sales analytics.",
+    "a": "**fact_sales** at grain 'one row per item per transaction' (measures: qty, amount, discount; FKs to dims). **Dimensions**: dim_date, dim_product (category, brand), dim_store (region, format), dim_customer. Use surrogate keys; apply **SCD Type 2** on dimensions like product/store so historical reports stay correct when attributes change.",
+    "topic": "Data Modeling",
+    "difficulty": "medium",
+    "companies": [
+      "Walmart"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "JPMC: Write SQL to compute a running total of daily transaction amounts per account.",
+    "a": "```sql\nSELECT account_id, txn_date, amount,\n       SUM(amount) OVER (PARTITION BY account_id ORDER BY txn_date\n                         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total\nFROM transactions;\n```\nWindow functions with a frame clause are the clean answer; mention indexing `(account_id, txn_date)` for performance.",
+    "topic": "SQL",
+    "difficulty": "medium",
+    "companies": [
+      "JPMorgan Chase"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "JPMC: Explain ACID and why it matters for financial data.",
+    "a": "**ACID** = Atomicity (all-or-nothing), Consistency (valid states only), Isolation (concurrent txns don't corrupt each other), Durability (survives crashes). Critical in finance: a money transfer must fully complete or fully roll back, never double-count or lose funds, even under concurrency and failures. Tie to transactions and isolation levels (Serializable for the strictest needs).",
+    "topic": "Concepts",
+    "difficulty": "medium",
+    "companies": [
+      "JPMorgan Chase"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "JPMC: Design a fraud-detection data pipeline.",
+    "a": "Clarify latency (real-time scoring?). **HLD**: transaction events → **Kafka** → stream processor computes features (velocity, geo, amount vs history) → feature store → ML model scores in real time → alerts; raw + features also land in the lakehouse for retraining and audit. Emphasise **low latency**, **feature parity** between training/serving, **data quality**, **lineage/auditability** (regulated), and monitoring for **drift**.",
+    "topic": "System Design",
+    "difficulty": "hard",
+    "companies": [
+      "JPMorgan Chase"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "JPMC: How do you ensure data quality and compliance in a regulated environment?",
+    "a": "Treat quality as code: schema + business-rule tests with **severity levels** (fail/warn/info), reconciliation of counts/totals, and freshness alerts, all run in-pipeline with failures logged to an **audit table**. For compliance: **lineage** (trace any number to source), least-privilege **access control**, PII masking/encryption, retention policies, and immutable audit logs. Tools: Great Expectations/dbt tests + a catalog (e.g. Unity Catalog).",
+    "topic": "Behavioral",
+    "difficulty": "medium",
+    "companies": [
+      "JPMorgan Chase"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: What is the difference between DELETE, TRUNCATE, and DROP?",
+    "a": "- **DELETE**: removes rows (optionally with WHERE), logged row-by-row, can be rolled back, keeps the table.\n- **TRUNCATE**: removes *all* rows fast (minimal logging), usually can't be rolled back, resets identity, keeps the table structure.\n- **DROP**: removes the entire table (structure + data).\nDELETE = DML, TRUNCATE/DROP = DDL.",
+    "topic": "SQL",
+    "difficulty": "easy",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: Explain normalization and the 1NF/2NF/3NF.",
+    "a": "Normalization removes redundancy so each fact is stored once. **1NF**: atomic values, no repeating groups. **2NF**: 1NF + no partial dependency on part of a composite key. **3NF**: 2NF + no transitive dependency (non-key depending on non-key). OLTP is normalized; warehouses often denormalize into a star schema for read speed.",
+    "topic": "Data Modeling",
+    "difficulty": "easy",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: How do you remove duplicates from a list while preserving order?",
+    "a": "```python\nseen = set()\nresult = [x for x in items if not (x in seen or seen.add(x))]\n# or simply (Python 3.7+, order-preserving):\nresult = list(dict.fromkeys(items))\n```\n`dict.fromkeys` is the cleanest order-preserving dedupe.",
+    "topic": "Python",
+    "difficulty": "easy",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: Walk me through a project on your resume.",
+    "a": "Use **Problem → My Role → Approach → Result**. Be specific about the tech stack and *your* contribution, and quantify the result. Service companies value clear communication and fundamentals; keep it structured and confident, and be ready for follow-ups on any tool you mention (so only mention what you can defend).",
+    "topic": "Behavioral",
+    "difficulty": "easy",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "TCS: Find duplicate records in a table using SQL.",
+    "a": "```sql\nSELECT email, COUNT(*) AS cnt\nFROM users\nGROUP BY email\nHAVING COUNT(*) > 1;\n```\nTo delete dupes keeping one, use a window: `ROW_NUMBER() OVER (PARTITION BY email ORDER BY id)` and delete where rn > 1.",
+    "topic": "SQL",
+    "difficulty": "easy",
+    "companies": [
+      "TCS"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "TCS: What are the steps of an ETL process?",
+    "a": "**Extract** from sources (DB/API/files), **Transform** (clean, validate, dedupe, join, aggregate, conform types/business rules), **Load** into the target (warehouse/mart). Mention incremental loads with a watermark, error handling/logging, and idempotency so retries don't duplicate.",
+    "topic": "ETL",
+    "difficulty": "easy",
+    "companies": [
+      "TCS"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "TCS: What is the difference between cache() and persist() in Spark?",
+    "a": "Both store a DataFrame/RDD for reuse to avoid recomputation. `cache()` uses the default storage level (MEMORY_AND_DISK for DataFrames). `persist(level)` lets you choose the level (memory only, memory+disk, serialized, replicated). Use them when a dataset is reused across multiple actions; unpersist when done to free memory.",
+    "topic": "Spark",
+    "difficulty": "medium",
+    "companies": [
+      "TCS"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "TCS: Why do you want to work in data engineering?",
+    "a": "Be genuine and concrete: enjoyment of building reliable systems, solving data problems, the growth of the field, and a specific spark (a project you loved). Tie it to strengths (logic, structure, persistence) and show you understand the role isn't glamorous modelling — it's dependable plumbing that everything else relies on.",
+    "topic": "Behavioral",
+    "difficulty": "easy",
+    "companies": [
+      "TCS"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Accenture: Explain the SQL order of execution.",
+    "a": "Logical execution order (not writing order): **FROM → JOIN → WHERE → GROUP BY → HAVING → SELECT → DISTINCT → ORDER BY → LIMIT**. This is why you can't use a SELECT alias in WHERE (SELECT runs after WHERE) but can in ORDER BY.",
+    "topic": "SQL",
+    "difficulty": "medium",
+    "companies": [
+      "Accenture"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Accenture: Compare the major cloud data warehouses.",
+    "a": "**Snowflake**: separates storage/compute, easy scaling, multi-cloud. **BigQuery (GCP)**: serverless, billed by bytes scanned (partition/cluster to save cost). **Redshift (AWS)**: node-based MPP, tune distribution/sort keys. **Synapse/Fabric (Azure)**: integrated with the Microsoft stack. All are columnar MPP; choice depends on existing cloud + workload.",
+    "topic": "Cloud",
+    "difficulty": "medium",
+    "companies": [
+      "Accenture"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Accenture: How do you handle slowly changing dimensions in an ETL pipeline?",
+    "a": "Identify which attributes need history. For **SCD Type 2**, run a **MERGE/upsert**: when a tracked attribute changes, expire the current row (set end_date, is_current=false) and insert a new versioned row with a fresh surrogate key. Tools like **dbt snapshots** or **Delta Lake MERGE** automate this. For corrections with no history value, use **Type 1** (overwrite).",
+    "topic": "ETL",
+    "difficulty": "medium",
+    "companies": [
+      "Accenture"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Cognizant: What is an index and how does it speed up queries (and its downside)?",
+    "a": "An **index** is a sorted data structure (usually a B-tree) on one or more columns letting the DB find rows without scanning the whole table — like a book's index. Great for JOIN/WHERE/ORDER BY columns. **Downside**: indexes consume storage and slow down writes (INSERT/UPDATE/DELETE must update the index), so index selectively.",
+    "topic": "SQL",
+    "difficulty": "medium",
+    "companies": [
+      "Cognizant"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Cognizant: How do you read a large CSV and write it to a database efficiently in Python?",
+    "a": "Stream in **chunks** to bound memory and **batch-insert**:\n```python\nfor chunk in pd.read_csv('big.csv', chunksize=100_000):\n    chunk = clean(chunk)\n    chunk.to_sql('table', engine, if_exists='append', index=False, method='multi')\n```\nUse a fast bulk-load path when available (COPY for Postgres, `LOAD DATA` for MySQL) for big volumes.",
+    "topic": "Python",
+    "difficulty": "medium",
+    "companies": [
+      "Cognizant"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Cognizant: Fact table vs dimension table?",
+    "a": "A **fact table** stores measurable events/metrics at a defined grain (numbers + foreign keys) — long and thin (e.g. fact_sales). A **dimension table** stores descriptive context you slice/filter by (e.g. dim_product, dim_date) — wide and short. Facts join to dimensions via surrogate keys in a star schema.",
+    "topic": "Data Modeling",
+    "difficulty": "medium",
+    "companies": [
+      "Cognizant"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Capgemini: How would you design an incremental data load?",
+    "a": "Track a **watermark** (max `updated_at` or id loaded). Each run pulls `WHERE updated_at > watermark`, transforms, and **upserts (MERGE)** into the target on a key for idempotency, then advances the watermark. For deletes/updates at source, use **CDC** (read the change log). Store the watermark durably (a control table) so reruns are safe.",
+    "topic": "ETL",
+    "difficulty": "medium",
+    "companies": [
+      "Capgemini"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Capgemini: What is lazy evaluation in Spark and why is it useful?",
+    "a": "Transformations build a logical plan but don't run until an **action** is called. This lets Spark's **Catalyst optimizer** see the full plan and optimise it — combining steps, pushing down filters/projections, and minimising shuffles — before executing, improving performance and resource use.",
+    "topic": "Spark",
+    "difficulty": "medium",
+    "companies": [
+      "Capgemini"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Capgemini: What is object storage and how is it used as a data lake?",
+    "a": "**Object storage** (S3/ADLS/GCS) stores files as objects in buckets — cheap, virtually unlimited, durable, any file type. A **data lake** is well-organised raw/curated data on object storage (e.g. bronze/silver/gold prefixes, Parquet). Compute engines (Spark, serverless query) read directly from it; it's the cost-effective foundation of cloud data platforms.",
+    "topic": "Cloud",
+    "difficulty": "easy",
+    "companies": [
+      "Capgemini"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Deloitte: A client wants a data platform from scratch. How do you approach it?",
+    "a": "Start with **requirements & use cases** (what decisions/products it must support, volumes, latency, compliance, budget, existing cloud). Then propose a layered architecture: ingestion → lake (medallion) → warehouse/marts → BI/ML, with orchestration, governance (catalog, lineage, access), and data quality baked in. Phase delivery (MVP first), and justify each tool choice with trade-offs. Consulting interviews reward structured thinking + business framing.",
+    "topic": "System Design",
+    "difficulty": "medium",
+    "companies": [
+      "Deloitte"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Deloitte: Tell me about a time you handled a difficult stakeholder.",
+    "a": "Use **STAR**. Show you **listened**, clarified the real need (often different from the stated ask), communicated trade-offs in plain business language, set expectations, and delivered. End with the positive outcome and the relationship preserved. Consulting heavily weights communication and client management.",
+    "topic": "Behavioral",
+    "difficulty": "medium",
+    "companies": [
+      "Deloitte"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Deloitte: What is data governance and why does it matter to clients?",
+    "a": "Governance = policies/controls treating data as a managed asset: **lineage, cataloging, access control, privacy/compliance (GDPR/HIPAA), ownership/stewardship**. It matters because it makes data trustworthy, auditable, secure, and compliant — essential for regulated clients and for scaling analytics/AI without chaos or risk.",
+    "topic": "Concepts",
+    "difficulty": "medium",
+    "companies": [
+      "Deloitte"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "PwC: How would you validate data quality after a load?",
+    "a": "Run automated checks: **row-count reconciliation** (source vs target), **null/uniqueness** on keys, **referential integrity**, **range/format** rules, and **freshness**. Assign severity (fail/warn/info), log failures with samples to an audit table, and surface a DQ scorecard. In SQL/dbt these become testable assertions run every load.",
+    "topic": "SQL",
+    "difficulty": "medium",
+    "companies": [
+      "PwC"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "PwC: What are the dimensions of data quality?",
+    "a": "**Accuracy, Completeness, Consistency, Timeliness/Freshness, Validity, Uniqueness.** A strong answer maps each to a concrete check (e.g. completeness → required fields not null; uniqueness → no duplicate keys; timeliness → data loaded by SLA).",
+    "topic": "Concepts",
+    "difficulty": "medium",
+    "companies": [
+      "PwC"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "PwC: How do you explain a technical concept to a non-technical client?",
+    "a": "Use analogies and outcomes, not jargon. Lead with the *business value* ('this makes reports trustworthy and a day fresher'), use a simple metaphor (data lake = a big organised warehouse), avoid acronyms or define them once, and confirm understanding. Tailoring communication to the audience is a core consulting skill.",
+    "topic": "Behavioral",
+    "difficulty": "easy",
+    "companies": [
+      "PwC"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "KPMG: How do you ensure data security and privacy in a pipeline?",
+    "a": "Apply **least-privilege** IAM, **encryption** at rest and in transit, **PII masking/tokenization**, **row/column-level access control**, **audit logging**, and **retention/deletion** policies for compliance (GDPR/HIPAA). Classify sensitive data via the catalog and restrict it. Mention lineage so you can prove where regulated data flows.",
+    "topic": "Concepts",
+    "difficulty": "medium",
+    "companies": [
+      "KPMG"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "KPMG: Write a query to find month-over-month revenue growth.",
+    "a": "```sql\nWITH m AS (\n  SELECT date_trunc('month', order_date) AS mth, SUM(amount) AS rev\n  FROM orders GROUP BY 1)\nSELECT mth, rev,\n       rev - LAG(rev) OVER (ORDER BY mth) AS mom_change,\n       ROUND(100.0*(rev - LAG(rev) OVER (ORDER BY mth)) / LAG(rev) OVER (ORDER BY mth), 2) AS mom_pct\nFROM m ORDER BY mth;\n```\n`LAG()` fetches the previous month's value for the comparison.",
+    "topic": "SQL",
+    "difficulty": "medium",
+    "companies": [
+      "KPMG"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "KPMG: Describe a time you improved a process or pipeline.",
+    "a": "STAR with a metric: e.g. 'a report took 6 hours; I found a full reload, switched to incremental + partition pruning + a broadcast join, cutting it to 25 minutes and saving cloud cost.' Show problem diagnosis, the engineering change, and quantified impact.",
+    "topic": "Behavioral",
+    "difficulty": "medium",
+    "companies": [
+      "KPMG"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "EY: Batch vs streaming — how do you decide?",
+    "a": "Decide by **latency requirement** and complexity tolerance. Batch (scheduled chunks) is simpler, cheaper, and fine for reports/most analytics. Streaming (event-by-event, ms–s) is for fraud detection, live dashboards, real-time alerts — but is harder to build/operate. A good answer: 'I default to batch unless the business truly needs sub-minute latency.'",
+    "topic": "ETL",
+    "difficulty": "medium",
+    "companies": [
+      "EY"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "EY: What is denormalization and when is it appropriate?",
+    "a": "Denormalization deliberately adds redundancy (pre-joined/duplicated data) to speed up reads by avoiding joins. Appropriate in **analytical warehouses** (star schema) where read performance matters more than write efficiency, and updates are controlled by the pipeline rather than ad-hoc. The trade-off is more storage and update complexity.",
+    "topic": "Data Modeling",
+    "difficulty": "easy",
+    "companies": [
+      "EY"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Amazon: Design a scalable clickstream analytics pipeline.",
+    "a": "Clarify scale/latency. **HLD**: web/app events → **Kinesis/Kafka** → land raw in **S3** (partitioned by date/hour, Parquet) → Spark/Glue transforms (sessionization, dedupe) → **Redshift/lakehouse** marts → BI/ML. Use **idempotent** writes, partition pruning, and exactly-once where needed. Discuss handling late events, schema evolution, small-file compaction, and cost (bytes scanned). Tie design choices to Amazon's **Leadership Principles** (Customer Obsession, Frugality, Ownership).",
+    "topic": "System Design",
+    "difficulty": "hard",
+    "companies": [
+      "Amazon"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Amazon: Write SQL to find users active on 3+ consecutive days.",
+    "a": "Use the 'gaps and islands' trick: rank dates per user and subtract.\n```sql\nWITH d AS (\n  SELECT DISTINCT user_id, activity_date FROM events),\ng AS (\n  SELECT user_id, activity_date,\n         activity_date - (ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY activity_date))::int AS grp\n  FROM d)\nSELECT user_id FROM g\nGROUP BY user_id, grp HAVING COUNT(*) >= 3;\n```\nConsecutive dates share the same `grp` value.",
+    "topic": "SQL",
+    "difficulty": "medium",
+    "companies": [
+      "Amazon"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Amazon: Tell me about a time you took ownership of a problem outside your responsibility.",
+    "a": "Amazon interviews are built on **Leadership Principles** — expect 1–2 behavioral questions per round, answered in **STAR** with data. For 'Ownership': pick a story where you saw a gap, took initiative without being asked, drove it to a measurable result, and followed through. Prepare 6–8 STAR stories mapped to principles (Customer Obsession, Dive Deep, Bias for Action, Deliver Results).",
+    "topic": "Behavioral",
+    "difficulty": "medium",
+    "companies": [
+      "Amazon"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer",
+      "GenAI Engineer"
+    ]
+  },
+  {
+    "q": "Amazon: Your Spark job produces thousands of tiny output files. What's wrong and how to fix it?",
+    "a": "The **small files problem** — too many output partitions (often after a wide shuffle) creates tiny files that hurt downstream read performance and metadata load. Fix with `coalesce(n)` or `repartition(n)` before writing to target a sensible file size (~128MB), enable AQE coalescing, or run periodic **compaction** (OPTIMIZE on Delta). Balance file count vs parallelism.",
+    "topic": "Spark",
+    "difficulty": "hard",
+    "companies": [
+      "Amazon"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Microsoft: Design a data platform on Azure for enterprise analytics.",
+    "a": "**HLD**: sources → **Azure Data Factory** (ingest) → **ADLS Gen2** lake (medallion) → **Azure Databricks/Synapse** transforms → **Synapse/Fabric** warehouse → Power BI. Governance via **Unity Catalog/Purview** (lineage, access), security via **Entra ID** RBAC + least privilege. Discuss medallion layers, Delta Lake for ACID, incremental loads, and cost management.",
+    "topic": "System Design",
+    "difficulty": "hard",
+    "companies": [
+      "Microsoft"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Microsoft: Explain clustered vs non-clustered indexes.",
+    "a": "A **clustered index** defines the physical order of rows in the table (one per table; the table *is* the index, like a sorted phonebook). A **non-clustered index** is a separate structure with pointers to rows (many allowed, like a book's index pointing to pages). Clustered is great for range scans on the key; non-clustered for looking up specific values on other columns.",
+    "topic": "SQL",
+    "difficulty": "medium",
+    "companies": [
+      "Microsoft"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Microsoft: Describe a time you received tough feedback. How did you respond?",
+    "a": "Microsoft values a **growth mindset**. STAR: state the feedback honestly, show you listened without defensiveness, the concrete change you made, and the improved result. Emphasise learning and humility — they're assessing whether you grow from setbacks rather than whether you were already perfect.",
+    "topic": "Behavioral",
+    "difficulty": "medium",
+    "companies": [
+      "Microsoft"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Google: Design a pipeline to process petabytes of logs daily on GCP.",
+    "a": "**HLD**: logs → **Pub/Sub** → **Dataflow** (Apache Beam, unified batch+stream) → **BigQuery** + **GCS** (raw, partitioned Parquet). Partition/cluster BigQuery tables to control bytes scanned; use streaming inserts or load jobs as needed. Discuss windowing, late data + watermarks, exactly-once, schema evolution, and cost (BQ bills by bytes scanned, so prune aggressively). Mention autoscaling and idempotency.",
+    "topic": "System Design",
+    "difficulty": "hard",
+    "companies": [
+      "Google"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Google: Compute the median of a column in SQL.",
+    "a": "Most engines: use a percentile function.\n```sql\nSELECT PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY amount) AS median FROM orders;\n```\nIn BigQuery: `APPROX_QUANTILES(amount, 2)[OFFSET(1)]`. If no percentile function, rank rows and pick the middle one(s) with window functions and handle even/odd counts.",
+    "topic": "SQL",
+    "difficulty": "hard",
+    "companies": [
+      "Google"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Google: Explain the CAP theorem with a concrete example.",
+    "a": "In a distributed system, during a **network partition** you must choose **Consistency** (reject/withhold to avoid stale data — CP) or **Availability** (always answer, accept staleness — AP); partition tolerance is mandatory. Example: two replicas can't sync — a bank balance system chooses CP (refuse to risk wrong balances); a social feed chooses AP (always loads, eventual consistency). Mention **PACELC** for the else-latency-vs-consistency extension.",
+    "topic": "Concepts",
+    "difficulty": "hard",
+    "companies": [
+      "Google"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Meta: Compute daily and 7-day rolling active users from an events table.",
+    "a": "DAU is a distinct count per day; rolling uses a window frame:\n```sql\nWITH dau AS (\n  SELECT event_date, COUNT(DISTINCT user_id) AS dau\n  FROM events GROUP BY event_date)\nSELECT event_date, dau,\n       SUM(dau) OVER (ORDER BY event_date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS rolling_7d\nFROM dau;\n```\nNote: true 7-day *unique* users needs distinct counting over the window (often approximated with HLL at Meta's scale).",
+    "topic": "SQL",
+    "difficulty": "hard",
+    "companies": [
+      "Meta"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Meta: How would you model data for a 'friends' / social graph?",
+    "a": "Discuss graph modelling: an edges table `(user_id, friend_id, created_at, status)` (often stored bidirectionally for fast lookups), partitioned/sharded by user_id for scale. For analytics, denormalize into derived tables (friend counts, mutual-friend features). Mention that traversals (friends-of-friends) are expensive and often precomputed or served by a specialised graph/key-value store rather than ad-hoc SQL at scale.",
+    "topic": "Data Modeling",
+    "difficulty": "hard",
+    "companies": [
+      "Meta"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Meta: Tell me about a project where you had to move fast with ambiguity.",
+    "a": "Meta values **impact** and 'move fast'. STAR: show how you scoped an ambiguous problem, made pragmatic decisions with incomplete info, shipped an MVP that delivered measurable value, then iterated. Emphasise prioritisation, ownership, and quantified impact on users/metrics.",
+    "topic": "Behavioral",
+    "difficulty": "medium",
+    "companies": [
+      "Meta"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Goldman Sachs: Given trades, compute each trader's cumulative P&L ordered by time.",
+    "a": "```sql\nSELECT trader_id, trade_time, pnl,\n       SUM(pnl) OVER (PARTITION BY trader_id ORDER BY trade_time\n                      ROWS UNBOUNDED PRECEDING) AS cumulative_pnl\nFROM trades;\n```\nDiscuss correct ordering, handling ties in trade_time, and indexing `(trader_id, trade_time)`. Finance interviews probe precision and edge cases.",
+    "topic": "SQL",
+    "difficulty": "hard",
+    "companies": [
+      "Goldman Sachs"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Goldman Sachs: How do you guarantee no data loss and exactly-once in a critical pipeline?",
+    "a": "Use durable, replayable ingestion (**Kafka** with retention + offsets), **idempotent** writes (MERGE/upsert keyed on a unique id), **checkpointing** in the stream processor, and transactional sinks (Delta/Iceberg) for atomic commits. Combine at-least-once delivery + idempotent processing = effective **exactly-once**. Add reconciliation counts and alerting to detect any gap.",
+    "topic": "Concepts",
+    "difficulty": "medium",
+    "companies": [
+      "Goldman Sachs"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Goldman Sachs: How do you handle working under pressure and tight deadlines?",
+    "a": "STAR with a real example: prioritise ruthlessly (what truly must ship), communicate status/risks early, break work into deliverable increments, and protect correctness on critical paths. Show composure and that you ask for help when blocked rather than going silent.",
+    "topic": "Behavioral",
+    "difficulty": "medium",
+    "companies": [
+      "Goldman Sachs"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Wipro: What is the difference between UNION and UNION ALL?",
+    "a": "**UNION** combines result sets and **removes duplicates** (incurs a sort/dedupe cost). **UNION ALL** combines and **keeps duplicates** — faster because it skips deduplication. Use UNION ALL when you know there are no dupes or you want them, for better performance.",
+    "topic": "SQL",
+    "difficulty": "easy",
+    "companies": [
+      "Wipro"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Wipro: How do you handle exceptions in Python?",
+    "a": "Use `try/except/else/finally`:\n```python\ntry:\n    risky()\nexcept ValueError as e:\n    log(e)            # handle specific error\nexcept Exception as e:\n    raise             # re-raise unexpected\nelse:\n    commit()          # ran only if no exception\nfinally:\n    cleanup()         # always runs\n```\nCatch specific exceptions, avoid bare `except:`, and clean up resources in `finally` (or use context managers `with`).",
+    "topic": "Python",
+    "difficulty": "easy",
+    "companies": [
+      "Wipro"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Wipro: What is data staging and why use a staging area?",
+    "a": "A **staging area** is intermediate storage where raw extracted data lands before transformation/loading. It decouples extract from transform, enables validation and reprocessing without re-pulling from source, supports incremental logic and auditing, and reduces load on source systems. It's the 'Bronze' idea in medallion architecture.",
+    "topic": "ETL",
+    "difficulty": "easy",
+    "companies": [
+      "Wipro"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Flipkart: Design the data pipeline behind a product recommendation feature.",
+    "a": "**HLD**: user events (views/clicks/buys) → Kafka → lake (Bronze) → feature pipelines (Spark) building user/item features → **feature store** → ML model trains offline, serves online; results cached for low latency. Discuss batch vs real-time features, **feature parity** train/serve, **drift** monitoring, cold-start handling, and A/B testing. Recommendations are an AI Data Engineering classic — emphasise the data plumbing around the model.",
+    "topic": "System Design",
+    "difficulty": "hard",
+    "companies": [
+      "Flipkart"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Flipkart: How do you join a massive orders table with a massive users table efficiently?",
+    "a": "Two big tables = a **sort-merge join** with a shuffle. Optimise by: pre-**bucketing/partitioning** both on the join key (user_id) to avoid re-shuffling, filtering/pruning columns first, handling **skew** (salting hot users), tuning shuffle partitions, and enabling AQE. Broadcast won't work (neither side is small).",
+    "topic": "Spark",
+    "difficulty": "medium",
+    "companies": [
+      "Flipkart"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Flipkart: How would you handle late-arriving data in an analytics pipeline?",
+    "a": "Use **event time** + **watermarks** to allow a grace period for late events; reprocess/upsert affected partitions idempotently when late data arrives (partition-scoped overwrite or MERGE). For dimensions, handle **late-arriving dimensions** by inserting a placeholder/'inferred member' and back-filling attributes later. Document the accepted lateness SLA.",
+    "topic": "Data Modeling",
+    "difficulty": "medium",
+    "companies": [
+      "Flipkart"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Netflix: Design a pipeline for viewing/playback events to power analytics and ML.",
+    "a": "**HLD**: player events → **Kafka** (massive scale, partitioned) → stream + batch paths (**Flink** for real-time metrics, Spark for batch) → **S3 (Iceberg)** lakehouse (medallion) → warehouse marts + feature store → dashboards, A/B testing, recommendation models. Discuss schema evolution, exactly-once, late events, huge volume/cost, and serving both real-time ops metrics and offline ML training from the same source of truth.",
+    "topic": "System Design",
+    "difficulty": "hard",
+    "companies": [
+      "Netflix"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Netflix: What is data drift and how do you detect it?",
+    "a": "**Data drift** is when the statistical properties of incoming data change over time, silently degrading models/reports. Detect by monitoring feature distributions (mean, variance, null rate, category frequencies) vs a training baseline, using tests/distance metrics (PSI, KS) and alerting on thresholds. Also watch **concept drift** (the input→output relationship changes). Triggers retraining or investigation.",
+    "topic": "Concepts",
+    "difficulty": "medium",
+    "companies": [
+      "Netflix"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Netflix: How do you tune a Spark job for very large-scale processing?",
+    "a": "Right-size partitions (~128MB), minimise shuffles (broadcast small sides, pre-partition), handle skew (salting/AQE), choose efficient formats (Parquet/Iceberg) + partition pruning, cache reused datasets, avoid `collect()`, tune executor memory/cores, enable AQE, and compact small files. Always profile with the Spark UI to target the actual bottleneck (stages with heavy shuffle/spill).",
+    "topic": "Spark",
+    "difficulty": "hard",
+    "companies": [
+      "Netflix"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Uber: Design a real-time pipeline for trip/location events and surge pricing.",
+    "a": "**HLD**: driver/rider apps → **Kafka** → **Flink** stream processing (geo-aggregation by region, supply/demand in time windows) → low-latency store feeding the surge model; raw lands in the lakehouse (**Hudi**) for analytics/ML. Discuss **windowing**, event-time + **watermarks** for late GPS pings, hot-region **skew**, exactly-once for billing, and serving fresh features. Surge needs seconds-level latency → streaming, not batch.",
+    "topic": "System Design",
+    "difficulty": "hard",
+    "companies": [
+      "Uber"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Uber: Find the average time between consecutive trips per driver.",
+    "a": "Use `LAG()` to get the previous trip time, then average the gaps:\n```sql\nWITH g AS (\n  SELECT driver_id, trip_start,\n         trip_start - LAG(trip_start) OVER (PARTITION BY driver_id ORDER BY trip_start) AS gap\n  FROM trips)\nSELECT driver_id, AVG(gap) AS avg_gap\nFROM g WHERE gap IS NOT NULL\nGROUP BY driver_id;\n```",
+    "topic": "SQL",
+    "difficulty": "hard",
+    "companies": [
+      "Uber"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Uber: Event time vs processing time — why does the distinction matter?",
+    "a": "**Event time** = when the event actually happened; **processing time** = when your system handled it. They differ due to network delays, retries, offline devices (a GPS ping may arrive minutes late). Aggregations must use **event time** for correctness, with **watermarks** defining how long to wait for late events before finalising a window — otherwise metrics are wrong or unstable.",
+    "topic": "Concepts",
+    "difficulty": "medium",
+    "companies": [
+      "Uber"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  }
+]

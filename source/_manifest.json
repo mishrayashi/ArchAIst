@@ -1,0 +1,22 @@
+[
+  "foundations",
+  "roles",
+  "roadmaps",
+  "role-tracks",
+  "module-python",
+  "module-sql",
+  "module-data-modeling",
+  "module-etl",
+  "module-spark",
+  "module-cloud",
+  "module-orchestration",
+  "module-warehouse",
+  "module-streaming",
+  "module-genai",
+  "concepts",
+  "concepts-extra",
+  "glossary",
+  "interview-questions",
+  "companies",
+  "companies-extra"
+]
