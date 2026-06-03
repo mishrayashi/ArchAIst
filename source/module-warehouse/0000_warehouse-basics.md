@@ -23,13 +23,9 @@ A <strong>warehouse</strong> is a tidy, labelled retail store — everything org
 </div>
 
 ## Why warehouses are fast: columnar storage
-Analytical queries usually touch *a few columns across millions of rows* ("total sales by month"). **Columnar storage** stores each column together, so the engine reads only the columns you ask for — skipping the rest. This (plus compression and parallelism) is why warehouses crush analytical queries. **Parquet** is the columnar file format you'll use in lakes.
+Analytical queries usually touch *a few columns across millions of rows*. **Columnar storage** keeps each column together, so the engine reads only the columns you ask for. Tick/untick columns below and watch the I/O drop (**Parquet** is the columnar format you'll use in lakes):
 
-```text
-Row storage (slow for analytics):  [id,name,amt][id,name,amt][id,name,amt]
-Columnar storage (fast):           [id,id,id][name,name,name][amt,amt,amt]
-                                                              ▲ read only this
-```
+<div class="widget-mount" data-widget="columnar"></div>
 
 ## MPP — Massively Parallel Processing
 Warehouses like Redshift/BigQuery/Snowflake split work across many nodes that each handle a slice of the data, then combine results. That's how they query terabytes in seconds. The key design implication for *you*: distribute data well and minimise data shuffling between nodes (same idea as Spark).

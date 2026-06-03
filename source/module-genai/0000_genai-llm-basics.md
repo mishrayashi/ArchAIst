@@ -13,8 +13,10 @@ You don't need a PhD to engineer with LLMs — but you do need a correct mental 
 A **Large Language Model** is, at its core, a **next-token predictor**. Given some text, it predicts the most likely next chunk of text (a "token"), appends it, and repeats. Trained on a huge slice of the internet, this simple objective produces models that can write, reason, summarise, translate, and code.
 
 <div class="eli"><span class="eli-tag">Explain like I'm new</span>
-It's an extraordinarily good autocomplete. Your phone suggests the next word; an LLM does this with vastly more context and knowledge, one <em>token</em> at a time, which is why it can write whole essays. It isn't "looking things up" — it's predicting plausible continuations from patterns it learned.
+It's an extraordinarily good autocomplete — one <em>token</em> at a time, with vast context. It isn't "looking things up"; it predicts plausible continuations. Try it:
 </div>
+
+<div class="widget-mount" data-widget="nextToken"></div>
 
 ## Vocabulary you must know
 - **Token:** the unit an LLM reads/writes — roughly ¾ of a word (e.g. "engineering" might be 2 tokens). You pay per token and limits are in tokens.

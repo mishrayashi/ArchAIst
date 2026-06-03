@@ -642,6 +642,132 @@
     show("Product-based");
   };
 
+  /* ---------- 19. Airflow DAG runner ---------- */
+  W.dag = function (mount) {
+    var body = shell(mount, { icon: "flow", title: "Airflow DAG, running", sub: "Tasks fire in dependency order; a failure retries", tag: "Live" });
+    // levels = columns; tasks run left→right, same level in parallel
+    var tasks = [
+      { id: "extract", lvl: 0, deps: [] },
+      { id: "transform", lvl: 1, deps: ["extract"] },
+      { id: "quality", lvl: 2, deps: ["transform"] },
+      { id: "load", lvl: 2, deps: ["transform"] },
+      { id: "report", lvl: 3, deps: ["quality", "load"] },
+    ];
+    body.innerHTML = '<div class="dag" id="dagWrap" style="display:flex;gap:30px;align-items:center;flex-wrap:wrap"></div>' +
+      '<div class="widget-controls" style="margin-top:14px"><button class="w-btn primary" id="dagRun">' + window.icon("play", "ic-sm") + " Run DAG</button>" +
+      '<label class="w-hint" style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="dagFail"> simulate a failure (watch the retry)</label></div>' +
+      '<div class="cap-scenario" id="dagNote"></div>';
+    var wrap = body.querySelector("#dagWrap"), note = body.querySelector("#dagNote");
+    var byLvl = {}; tasks.forEach(function (t) { (byLvl[t.lvl] = byLvl[t.lvl] || []).push(t); });
+    function build() {
+      wrap.innerHTML = "";
+      Object.keys(byLvl).forEach(function (lvl) {
+        var col = document.createElement("div"); col.style.display = "flex"; col.style.flexDirection = "column"; col.style.gap = "10px";
+        byLvl[lvl].forEach(function (t) {
+          var n = document.createElement("div"); n.className = "dag-node lazy"; n.dataset.id = t.id;
+          n.innerHTML = '<span class="dn-type">task</span><span>' + t.id + "</span>";
+          col.appendChild(n);
+        });
+        wrap.appendChild(col);
+        if (+lvl < 3) { var a = document.createElement("span"); a.className = "flow-arrow"; a.innerHTML = window.icon("arrowRight", "ic-sm"); wrap.appendChild(a); }
+      });
+      note.innerHTML = "A <b>DAG</b> = tasks + dependencies. Tasks on the same column have no dependency, so Airflow runs them <b>in parallel</b>.";
+    }
+    function nodeEl(id) { return wrap.querySelector('.dag-node[data-id="' + id + '"]'); }
+    function run() {
+      build();
+      var failOn = body.querySelector("#dagFail").checked ? "quality" : null;
+      var order = tasks.slice();
+      var done = {}, i = 0, retried = false;
+      body.querySelector("#dagRun").disabled = true;
+      function step() {
+        // find next runnable task whose deps are done
+        var t = order.find(function (x) { return !done[x.id] && x.deps.every(function (d) { return done[d]; }); });
+        if (!t) { note.innerHTML = "All tasks succeeded. ✓ The DAG run is complete."; body.querySelector("#dagRun").disabled = false; return; }
+        var el = nodeEl(t.id); el.classList.remove("lazy"); el.classList.add("running");
+        var to = setTimeout(function () {
+          if (t.id === failOn && !retried) {
+            retried = true; el.classList.remove("running"); el.classList.add("t-action");
+            el.style.borderColor = "var(--red)";
+            note.innerHTML = "<b style=\"color:var(--red)\">" + t.id + " failed!</b> Airflow waits, then <b>retries</b> (retries=3). Only this task re-runs — not the whole pipeline.";
+            var rt = setTimeout(function () { el.style.borderColor = ""; el.classList.remove("t-action"); el.classList.add("running"); var rt2 = setTimeout(finish, 600); addTimer(rt2); }, 1100); addTimer(rt);
+            function finish() { el.classList.remove("running"); el.classList.add("executed"); done[t.id] = true; var n = setTimeout(step, 350); addTimer(n); }
+          } else {
+            el.classList.remove("running"); el.classList.add("executed"); done[t.id] = true;
+            var n = setTimeout(step, 350); addTimer(n);
+          }
+        }, 600); addTimer(to);
+      }
+      step();
+    }
+    body.querySelector("#dagRun").addEventListener("click", run);
+    build();
+  };
+
+  /* ---------- 20. Row vs columnar storage ---------- */
+  W.columnar = function (mount) {
+    var body = shell(mount, { icon: "database", title: "Row vs columnar storage", sub: "Why warehouses read only the columns you ask for", tag: "Try it" });
+    var cols = ["id", "name", "city", "amount"];
+    body.innerHTML = '<div class="widget-controls" style="flex-wrap:wrap">Query: <code style="font-family:var(--mono);font-size:12px">SELECT</code>' +
+      cols.map(function (c) { return '<label class="w-hint" style="gap:5px"><input type="checkbox" data-c="' + c + '"' + (c === "amount" ? " checked" : "") + "> " + c + "</label>"; }).join("") + "</div>" +
+      '<div class="two-col" style="margin-top:10px"><div><h6 class="tcap">Row storage</h6><div id="rowS"></div><div class="proc-count" id="rowMsg"></div></div>' +
+      '<div><h6 class="tcap">Columnar storage</h6><div id="colS"></div><div class="proc-count" id="colMsg"></div></div></div>' +
+      '<div class="w-hint">Both hold the same 4 rows. <b>Row</b> stores whole rows together, so it must read everything. <b>Columnar</b> stores each column together, so it reads <b>only the selected columns</b> — far less I/O. That + compression is why warehouses are fast.</div>';
+    var rows = 4;
+    function picked() { return cols.filter(function (c) { return body.querySelector('input[data-c="' + c + '"]').checked; }); }
+    function draw() {
+      var sel = picked();
+      var rowEl = body.querySelector("#rowS"); rowEl.innerHTML = "";
+      for (var r = 0; r < rows; r++) {
+        var blk = document.createElement("div"); blk.className = "jrow matched"; blk.style.display = "flex"; blk.style.gap = "4px"; blk.style.padding = "3px";
+        cols.forEach(function (c) { var cell = document.createElement("span"); cell.textContent = c; cell.style.cssText = "flex:1;text-align:center;border-radius:4px;padding:2px;font-size:11px;background:var(--accent-soft)"; blk.appendChild(cell); });
+        rowEl.appendChild(blk);
+      }
+      var colEl = body.querySelector("#colS"); colEl.innerHTML = ""; colEl.style.display = "flex"; colEl.style.gap = "4px";
+      cols.forEach(function (c) {
+        var on = sel.indexOf(c) !== -1;
+        var stack = document.createElement("div"); stack.style.cssText = "flex:1;display:flex;flex-direction:column;gap:4px;opacity:" + (on ? 1 : 0.25);
+        var h = document.createElement("div"); h.textContent = c; h.style.cssText = "text-align:center;font-size:10px;font-weight:700"; stack.appendChild(h);
+        for (var r2 = 0; r2 < rows; r2++) { var cell2 = document.createElement("span"); cell2.style.cssText = "height:14px;border-radius:3px;background:" + (on ? "var(--accent)" : "var(--surface-3)"); stack.appendChild(cell2); }
+        colEl.appendChild(stack);
+      });
+      body.querySelector("#rowMsg").innerHTML = "reads <b>" + (rows * cols.length) + "</b> cells (all of them)";
+      body.querySelector("#colMsg").innerHTML = "reads <b>" + (rows * sel.length) + "</b> cells (" + Math.round(sel.length / cols.length * 100) + "% of the data)";
+    }
+    cols.forEach(function (c) { body.querySelector('input[data-c="' + c + '"]').addEventListener("change", draw); });
+    draw();
+  };
+
+  /* ---------- 21. LLM next-token predictor ---------- */
+  W.nextToken = function (mount) {
+    var body = shell(mount, { icon: "sparkles", title: "An LLM predicts the next token", sub: "Pick the next token, one step at a time", tag: "Try it" });
+    var steps = [
+      { ctx: "The data engineer built a", opts: [["pipeline", 0.62], ["model", 0.21], ["sandwich", 0.05]] },
+      { ctx: "The data engineer built a pipeline to", opts: [["move", 0.48], ["clean", 0.33], ["sing", 0.02]] },
+      { ctx: "The data engineer built a pipeline to move", opts: [["data", 0.71], ["houses", 0.04], ["mountains", 0.02]] },
+    ];
+    body.innerHTML = '<div class="cap-scenario" id="ntCtx" style="font-family:var(--mono);font-size:13px;min-height:24px"></div>' +
+      '<div class="widget-controls" id="ntOpts" style="flex-wrap:wrap"></div>' +
+      '<div class="widget-controls" style="margin-top:10px"><button class="w-btn" id="ntReset">' + window.icon("refresh", "ic-sm") + " Reset</button></div>" +
+      '<div class="w-hint">That\'s the whole trick: given the text so far, the model assigns a <b>probability</b> to every possible next token and emits one, then repeats. <b>Temperature</b> decides how often it picks a lower-probability option (creativity vs focus). It isn\'t “looking things up.”</div>';
+    var ctxEl = body.querySelector("#ntCtx"), optsEl = body.querySelector("#ntOpts");
+    var i = 0, built = "";
+    function render() {
+      if (i >= steps.length) { ctxEl.innerHTML = built + ' <span style="color:var(--green)">… and so on, one token at a time.</span>'; optsEl.innerHTML = ""; return; }
+      built = steps[i].ctx;
+      ctxEl.innerHTML = built + ' <span style="color:var(--accent);font-weight:700">▍</span>';
+      optsEl.innerHTML = "";
+      steps[i].opts.forEach(function (o) {
+        var b = document.createElement("button"); b.className = "w-btn"; if (o[1] >= 0.4) b.classList.add("primary");
+        b.innerHTML = o[0] + ' <span style="opacity:.6;font-size:11px">' + Math.round(o[1] * 100) + "%</span>";
+        b.addEventListener("click", function () { i++; render(); });
+        optsEl.appendChild(b);
+      });
+    }
+    body.querySelector("#ntReset").addEventListener("click", function () { i = 0; render(); });
+    render();
+  };
+
   /* ---------- registry + mounting ---------- */
   function mountAll(root) {
     clearAll();
