@@ -21,6 +21,12 @@ Think of a giant, magical library. A <strong>spreadsheet</strong> is a single no
 
 For a beginner: **learn SQL first.** It is the single most important skill in all of data work. Every data engineer, analyst, and scientist uses it daily.
 
+<div class="callout callout-note"><span class="cfor"></span><div><span class="ctitle">SQL vs NoSQL in one line:</span> Use <strong>SQL</strong> when relationships and correctness matter (orders, payments, users) — it gives you a strict schema and transactions. Reach for <strong>NoSQL</strong> when you need flexible shapes or extreme scale on simple access patterns (a product catalog, a cache, time-series events).</div></div>
+
+<div class="pro"><span class="pro-tag">Going deeper · for the experienced</span>
+"SQL vs NoSQL" is really a set of trade-offs, not a single choice. Relational stores give you <strong>ACID transactions</strong>, joins, and a fixed schema — ideal for OLTP. NoSQL splits into families with different super-powers: <em>document</em> (MongoDB — flexible nested records), <em>key-value</em> (Redis/DynamoDB — O(1) lookups, caching), <em>wide-column</em> (Cassandra — write-heavy, linear scale), and <em>graph</em> (Neo4j — relationship traversal). Most are AP-leaning under <a href="#/page/cap-distributed">CAP</a> and offer tunable/eventual consistency. The senior instinct: pick the store from the <em>access pattern and consistency need</em>, and expect a real system to use several (polyglot persistence) — e.g. Postgres for orders, Redis for sessions, a warehouse for analytics.
+</div>
+
 ## SQL = asking questions in (almost) English
 
 SQL stands for **Structured Query Language**. A *query* is just a question you ask the database. Look how readable it is:

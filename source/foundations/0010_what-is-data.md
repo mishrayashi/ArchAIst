@@ -53,4 +53,18 @@ Because data answers questions that make or save money:
 
 Turning raw, messy data into clean answers is **literally the job** of a data engineer. AI is the newest, most powerful tool for squeezing answers out of data — especially messy, unstructured data.
 
-> **Key takeaway:** Data = recorded facts. The whole industry exists to *collect it, clean it, move it, store it, and turn it into decisions.*
+## Data vs information vs knowledge
+
+A subtle distinction interviewers and senior engineers care about:
+
+- **Data** — the raw fact: `38.5`.
+- **Information** — data with context: `patient temperature = 38.5°C`.
+- **Knowledge** — information you can act on: `38.5°C is a fever → flag for review`.
+
+Your whole pipeline is a machine that climbs this ladder: collect raw **data**, add structure and context to make **information**, then aggregate and model it into **knowledge** that drives a decision.
+
+<div class="pro"><span class="pro-tag">Going deeper · for the experienced</span>
+The structured/semi/unstructured split maps directly to <em>storage and processing choices</em>. Structured → relational tables / columnar warehouses (great for SQL, compression, BI). Semi-structured (JSON/Avro/Parquet) → schema-on-read lakes and nested types; you trade strict schemas for flexibility and pay it back with schema evolution and contracts. Unstructured (text/image/audio) → object storage + embeddings + vector indexes for similarity search. A lot of "AI data engineering" is precisely the work of turning unstructured blobs into structured features and vectors the models can consume.
+</div>
+
+> **Key takeaway:** Data = recorded facts. The whole industry exists to *collect it, clean it, move it, store it, and turn it into decisions* — climbing the data → information → knowledge ladder.

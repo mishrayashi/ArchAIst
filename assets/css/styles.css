@@ -903,3 +903,21 @@ body {
   .ai-launcher span { display: none; }
   .ai-launcher { padding: 14px; }
 }
+
+/* ---------- "Going deeper" block — depth for experienced readers ---------- */
+.pro {
+  position: relative; margin: 20px 0; padding: 16px 18px;
+  border-radius: 14px; background: var(--surface-2);
+  border: 1px solid var(--border); overflow: hidden;
+}
+.pro::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, var(--accent-2), var(--accent)); }
+.pro .pro-tag { font-size: 10.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--accent-2); display: block; margin-bottom: 5px; }
+[data-theme="light"] .pro .pro-tag { color: #0a7c93; }
+
+/* compact comparison cards (used by the Industries section) */
+.cmp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 20px 0; }
+.cmp-card { border: 1px solid var(--border); border-radius: 14px; padding: 15px 16px; background: var(--surface); box-shadow: var(--shadow); }
+.cmp-card h4 { margin: 0 0 4px; font-size: 15px; }
+.cmp-card .cmp-tag { font-size: 11px; font-weight: 700; color: var(--accent-strong); display: block; margin-bottom: 8px; }
+.cmp-card ul { margin: 6px 0 0; padding-left: 18px; }
+.cmp-card li { font-size: 13px; margin: 3px 0; }

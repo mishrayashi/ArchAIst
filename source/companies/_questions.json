@@ -1110,5 +1110,151 @@
       "Data Engineer",
       "AI Data Engineer"
     ]
+  },
+  {
+    "q": "Infosys: What is a primary key vs a foreign key vs a unique key?",
+    "a": "**Primary key** uniquely identifies each row — not null, one per table (often a surrogate id). **Foreign key** is a column that references another table's primary key, enforcing referential integrity (no orphan rows). **Unique key** guarantees no duplicates in a column but *can* allow one NULL and you can have several per table (e.g. `email`). Mnemonic: PK = identity, FK = relationship, UK = no-duplicates constraint.",
+    "topic": "SQL",
+    "difficulty": "easy",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: Write SQL to find employees who earn more than the average salary of their department.",
+    "a": "Correlated subquery (or window) — a frequent Infosys ask:\n```sql\n-- correlated subquery\nSELECT e.* FROM employees e\nWHERE e.salary > (\n  SELECT AVG(salary) FROM employees d WHERE d.dept_id = e.dept_id);\n\n-- window-function version (one pass, usually faster)\nWITH x AS (\n  SELECT *, AVG(salary) OVER (PARTITION BY dept_id) AS dept_avg\n  FROM employees)\nSELECT * FROM x WHERE salary > dept_avg;\n```\nMention that the window version avoids re-scanning per row.",
+    "topic": "SQL",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: What is the difference between UNION and UNION ALL?",
+    "a": "`UNION` stacks two result sets **and removes duplicates** (so it does a sort/hash to dedupe — extra cost). `UNION ALL` keeps **everything, including duplicates**, and is therefore faster. Use `UNION ALL` by default when you know rows can't overlap or duplicates are fine; only pay for `UNION` when you actually need distinct rows. Both require the same column count and compatible types.",
+    "topic": "SQL",
+    "difficulty": "easy",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: Explain ACID properties with a simple example.",
+    "a": "ACID guarantees reliable transactions:\n- **Atomicity** — all steps happen or none (a money transfer debits *and* credits, or rolls back).\n- **Consistency** — the DB moves from one valid state to another (constraints hold).\n- **Isolation** — concurrent transactions don't corrupt each other (as if run one-by-one).\n- **Durability** — once committed, it survives a crash (written to disk/log).\nTry the ACID atomicity widget in the Core Concepts module — it lets you 'crash' a transfer mid-way and watch the rollback.",
+    "topic": "Concepts",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: How is Python's memory managed (garbage collection)?",
+    "a": "CPython uses **reference counting** as the primary mechanism — each object tracks how many references point to it; when the count hits zero it's freed immediately. A supplementary **generational garbage collector** handles **reference cycles** (objects that reference each other but are otherwise unreachable). Practical implications: avoid needless global references, be aware that cycles need the GC, and use generators/`with` blocks to release resources promptly.",
+    "topic": "Python",
+    "difficulty": "hard",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: What is the GIL and when does it actually matter?",
+    "a": "The **Global Interpreter Lock** lets only one thread execute Python bytecode at a time in CPython. It matters for **CPU-bound** multithreading (threads won't use multiple cores — use `multiprocessing` or native libs instead). It barely matters for **I/O-bound** work (network/disk waits release the GIL, so threads/async still help). For data engineering, heavy lifting in NumPy/pandas/Spark runs in C/JVM outside the GIL anyway.",
+    "topic": "Python",
+    "difficulty": "hard",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: How would you handle missing or null values in a dataset?",
+    "a": "First understand *why* they're missing, then choose per column: **drop** rows/columns if sparse and non-critical; **impute** (mean/median/mode, forward-fill for time series, or a model-based estimate); or **flag** with an 'is_missing' indicator so the model can learn from the absence. In SQL use `COALESCE`/`IFNULL`; in pandas `fillna`/`dropna`. The wrong move is silently dropping data — always quantify how much you removed and why.",
+    "topic": "Concepts",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer",
+      "Data Scientist"
+    ]
+  },
+  {
+    "q": "Infosys: What is partitioning and bucketing in Hive/Spark, and why use them?",
+    "a": "**Partitioning** splits a table into directories by a column (e.g. `date=2026-06-01`) so queries that filter on it read only relevant folders (**partition pruning**) — huge I/O savings. **Bucketing** hashes a column into a fixed number of files within each partition, which speeds up joins/aggregations on that column (matching buckets join without a full shuffle). Rule: partition on low-cardinality, frequently-filtered columns (date, region); bucket on high-cardinality join keys (user_id).",
+    "topic": "Spark",
+    "difficulty": "hard",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: Explain the medallion (Bronze/Silver/Gold) architecture.",
+    "a": "A lakehouse pattern that refines data in layers: **Bronze** = raw, as-ingested (immutable landing); **Silver** = cleaned, deduplicated, typed, conformed; **Gold** = business-level aggregates/marts ready for BI and ML. Benefits: raw is always replayable, each layer has a clear contract, and failures are isolated to a stage. See the medallion widget in the Warehouse/Lakehouse module to watch data refine Bronze→Gold.",
+    "topic": "ETL",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: How would you schedule and monitor data pipelines in production?",
+    "a": "Use an orchestrator like **Airflow** (DAGs of tasks with dependencies, retries, backfills, SLAs). For monitoring: task-level alerting (on failure/SLA miss), data-quality checks as gates, freshness/volume metrics, and idempotent tasks so retries are safe. Log lineage so you can trace a bad number to its source. Mention the Airflow lesson in the Orchestration module; key concepts are DAG, operator, sensor, retry, and backfill.",
+    "topic": "System Design",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: A query suddenly got slow in production — how do you debug it?",
+    "a": "Systematic triage: (1) reproduce and check **`EXPLAIN`/the query plan** for full scans, bad join order, or missing index use; (2) check whether **data volume** grew or **stats are stale** (re-analyze); (3) look for **lock/contention** or resource limits; (4) verify an index wasn't dropped or a predicate changed (e.g. now non-sargable like `WHERE func(col)=…`); (5) check for **skew** if it's distributed. Fix the root cause (index, rewrite, partition) and confirm with the plan — don't just throw hardware at it.",
+    "topic": "SQL",
+    "difficulty": "hard",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: What does a typical data engineering interview at Infosys look like?",
+    "a": "Usually: (1) an **online/aptitude + basic coding** round, (2) a **technical round** heavy on SQL (joins, GROUP BY, window functions, query writing), Python basics, and data-warehousing/ETL concepts, sometimes a Spark or cloud question, and (3) an **HR/managerial** round on projects, communication, and fit. They probe **fundamentals deeply** rather than exotic trivia — be rock-solid on SQL, normalization, SCD, ETL vs ELT, and be able to defend every line on your resume with STAR stories.",
+    "topic": "Behavioral",
+    "difficulty": "easy",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
   }
 ]

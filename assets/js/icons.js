@@ -46,6 +46,7 @@
     companies: "building",
     glossary: "book",
     progress: "chart",
+    industries: "building",
   };
 
   function icon(name, cls) {
