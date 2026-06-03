@@ -24,7 +24,7 @@
     <g transform="translate(22,13) scale(0.95)">
       <rect width="22" height="22" rx="6" fill="url(#dg)"/>
       <g transform="translate(4,3.5) scale(0.6)" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 20L12 4l8 16"/><path d="M7.5 13.5h9"/>
+        <path d="M5 20L12 5l7 15"/><path d="M8 14h8"/><circle cx="12" cy="5" r="1.9" fill="#fff" stroke="none"/><circle cx="5" cy="20" r="1.9" fill="#fff" stroke="none"/><circle cx="19" cy="20" r="1.9" fill="#fff" stroke="none"/>
       </g>
     </g>
     <text x="52" y="29" font-family="Inter,Segoe UI,Arial" font-size="14" font-weight="800" fill="#eaeefb">Arch<tspan fill="#a779ff">AI</tspan>st</text>

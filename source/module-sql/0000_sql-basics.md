@@ -59,7 +59,10 @@ SELECT MIN(amount), MAX(amount) FROM orders;
 ```
 
 ## GROUP BY — aggregate *per category*
-This is where SQL gets powerful. "Total sales **per** city," "orders **per** customer."
+This is where SQL gets powerful. "Total sales **per** city," "orders **per** customer." Hit play below and switch between SUM / COUNT / AVG to *see* the rows collapse into one row per group:
+
+<div class="widget-mount" data-widget="groupBy"></div>
+
 ```sql
 -- Total amount spent by each customer
 SELECT cust_id, SUM(amount) AS total_spent

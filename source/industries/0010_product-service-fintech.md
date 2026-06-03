@@ -11,6 +11,10 @@ Let's put the three side by side — what the day actually looks like, what they
 
 ## At a glance
 
+Click each type to see how the day-to-day data work changes:
+
+<div class="widget-mount" data-widget="industry"></div>
+
 <div class="cmp-grid">
 <div class="cmp-card"><h4>Product-based</h4><span class="cmp-tag">Builds & owns one product</span>
 <ul>
