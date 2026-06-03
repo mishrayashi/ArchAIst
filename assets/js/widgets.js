@@ -768,6 +768,68 @@
     render();
   };
 
+  /* ---------- 22. HLD vs LLD zoom toggle ---------- */
+  W.hldlld = function (mount) {
+    var body = shell(mount, { icon: "layers", title: "HLD vs LLD — same system, two zooms", sub: "Toggle the zoom level", tag: "Try it" });
+    body.innerHTML = '<div class="widget-controls"><button class="w-btn active" id="hlBtn">HLD · bird\'s-eye</button><button class="w-btn" id="llBtn">LLD · zoomed in</button></div>' +
+      '<div id="hlView" style="margin-top:6px"></div><div class="w-hint" id="hlHint"></div>';
+    var hld = '<div class="flow" style="flex-wrap:wrap">' +
+      ["Sources", "Ingestion: Kafka", "Lake: S3", "Spark", "Warehouse", "BI · ML · API"].map(function (s, i, a) {
+        return '<div class="flow-stage"><div class="flow-box' + (i === 4 ? " lit" : "") + '"><div class="fb-title">' + s + "</div></div>" + (i < a.length - 1 ? '<span class="flow-arrow">' + window.icon("arrowRight", "ic-sm") + "</span>" : "") + "</div>";
+      }).join("") + "</div>";
+    var lld = '<table class="w-table"><thead><tr><th>column</th><th>type</th><th>note</th></tr></thead><tbody>' +
+      [["sale_id", "BIGINT", "PRIMARY KEY"], ["date_key", "INT", "FK → dim_date"], ["product_key", "INT", "FK → dim_product"], ["amount", "NUMERIC(12,2)", "measure"], ["quantity", "INT", "measure"]]
+        .map(function (r, i) { return '<tr class="' + (i === 0 ? "w-row-new" : "") + '"><td>' + r[0] + "</td><td>" + r[1] + "</td><td>" + r[2] + "</td></tr>"; }).join("") +
+      "</tbody></table>";
+    function show(which) {
+      var hl = which === "hld";
+      body.querySelector("#hlBtn").classList.toggle("active", hl);
+      body.querySelector("#llBtn").classList.toggle("active", !hl);
+      body.querySelector("#hlView").innerHTML = hl ? hld : lld;
+      body.querySelector("#hlHint").innerHTML = hl
+        ? "<b>HLD</b> = the boxes &amp; arrows: components, data flow, tech choices. \"We'll use a warehouse with a star schema.\""
+        : "<b>LLD</b> = inside one box: the exact <code>fact_sales</code> schema — columns, keys, partitioning. \"Here's the table and its upsert logic.\"";
+    }
+    body.querySelector("#hlBtn").addEventListener("click", function () { show("hld"); });
+    body.querySelector("#llBtn").addEventListener("click", function () { show("lld"); });
+    show("hld");
+  };
+
+  /* ---------- 23. Data-quality gate ---------- */
+  W.dataQuality = function (mount) {
+    var body = shell(mount, { icon: "target", title: "The data-quality gate", sub: "Toggle checks; watch bad rows get caught", tag: "Try it" });
+    var rows = [
+      { id: 1, cust: "Ravi", amt: 300, ok: true },
+      { id: 2, cust: "", amt: 50, bad: "completeness", note: "missing customer" },
+      { id: 3, cust: "Sara", amt: -90, bad: "validity", note: "amount < 0" },
+      { id: 1, cust: "Ravi", amt: 300, bad: "uniqueness", note: "duplicate id" },
+      { id: 5, cust: "Amit", amt: 120, ok: true },
+    ];
+    var checks = { completeness: true, validity: true, uniqueness: true };
+    body.innerHTML = '<div class="widget-controls" id="dqChecks"></div>' +
+      '<div id="dqRows" style="margin-top:6px"></div><div class="w-hint" id="dqMsg"></div>';
+    var cEl = body.querySelector("#dqChecks");
+    Object.keys(checks).forEach(function (k) {
+      var l = document.createElement("label"); l.className = "w-hint"; l.style.gap = "5px";
+      l.innerHTML = '<input type="checkbox" data-c="' + k + '" checked> ' + k + " check";
+      cEl.appendChild(l);
+    });
+    function draw() {
+      Object.keys(checks).forEach(function (k) { checks[k] = body.querySelector('input[data-c="' + k + '"]').checked; });
+      var pass = 0, caught = 0;
+      body.querySelector("#dqRows").innerHTML = rows.map(function (r) {
+        var blocked = r.bad && checks[r.bad];
+        if (blocked) caught++; else pass++;
+        var cls = blocked ? "dropped" : "kept matched";
+        var tag = blocked ? ' <b style="color:var(--red)">✗ ' + r.note + "</b>" : ' <span style="color:var(--green)">✓ passed</span>';
+        return '<div class="jrow ' + cls + '">id ' + r.id + " · " + (r.cust || "—") + " · ₹" + r.amt + tag + "</div>";
+      }).join("");
+      body.querySelector("#dqMsg").innerHTML = "<b>" + pass + "</b> rows reach Gold, <b>" + caught + "</b> caught at the gate. Turn checks off and the bad rows leak through — that's why quality runs <i>inside</i> the pipeline as code.";
+    }
+    Object.keys(checks).forEach(function (k) { body.querySelector('input[data-c="' + k + '"]').addEventListener("change", draw); });
+    draw();
+  };
+
   /* ---------- registry + mounting ---------- */
   function mountAll(root) {
     clearAll();
