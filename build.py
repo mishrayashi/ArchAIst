@@ -117,6 +117,12 @@ def build_group(name):
     if os.path.exists(g):
         out.append("LP.termsBulk(%s);" % jsval(read_json(g)))
 
+    # Optional mind-map cross-links. Emitted only when the file exists, so
+    # groups without one stay byte-identical (the verify.js baseline holds).
+    lk = os.path.join(d, "_links.json")
+    if os.path.exists(lk):
+        out.append("LP.linksBulk(%s);" % jsval(read_json(lk)))
+
     with open(os.path.join(OUT, name + ".js"), "w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(out) + "\n")
     return pages
