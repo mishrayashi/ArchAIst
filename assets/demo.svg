@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 480" width="880" height="480" role="img" aria-label="ArchAIst product tour — animated demo">
+  <defs>
+    <linearGradient id="dg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7c7cff"/><stop offset="50%" stop-color="#a779ff"/><stop offset="100%" stop-color="#36d6f5"/>
+    </linearGradient>
+    <linearGradient id="dbg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b0c12"/><stop offset="100%" stop-color="#0f1118"/>
+    </linearGradient>
+    <filter id="ds" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <!-- window -->
+  <rect x="0" y="0" width="880" height="480" rx="16" fill="url(#dbg)"/>
+  <rect x="0.5" y="0.5" width="879" height="479" rx="16" fill="none" stroke="#232838"/>
+
+  <!-- top bar -->
+  <g>
+    <rect x="0" y="0" width="880" height="48" rx="16" fill="#0f1118"/>
+    <rect x="0" y="40" width="880" height="8" fill="#0f1118"/>
+    <line x1="0" y1="48" x2="880" y2="48" stroke="#232838"/>
+    <!-- arch+spark brand -->
+    <g transform="translate(22,13) scale(0.95)">
+      <rect width="22" height="22" rx="6" fill="url(#dg)"/>
+      <g transform="translate(4,3.5) scale(0.6)" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 20L12 5l7 15"/><path d="M8 14h8"/><circle cx="12" cy="5" r="1.9" fill="#fff" stroke="none"/><circle cx="5" cy="20" r="1.9" fill="#fff" stroke="none"/><circle cx="19" cy="20" r="1.9" fill="#fff" stroke="none"/>
+      </g>
+    </g>
+    <text x="52" y="29" font-family="Inter,Segoe UI,Arial" font-size="14" font-weight="800" fill="#eaeefb">Arch<tspan fill="#a779ff">AI</tspan>st</text>
+    <rect x="300" y="11" width="360" height="26" rx="13" fill="#161922" stroke="#232838"/>
+    <text x="318" y="28" font-family="Inter,Segoe UI,Arial" font-size="11.5" fill="#8b95ab">Search lessons, terms, interview questions…  ( / )</text>
+    <circle cx="846" cy="24" r="11" fill="#161922" stroke="#232838"/>
+  </g>
+
+  <!-- caption -->
+  <g font-family="Inter,Segoe UI,Arial" font-size="13" font-weight="700" fill="#36d6f5">
+    <text x="24" y="72" opacity="0">Explore every topic as a living mind map
+      <animate attributeName="opacity" values="0;1;1;0;0;0;0;0" keyTimes="0;0.04;0.28;0.32;0.34;1;1;1" dur="16s" repeatCount="indefinite"/>
+    </text>
+    <text x="24" y="72" opacity="0">Click a topic → branch into its lessons
+      <animate attributeName="opacity" values="0;0;0;0;1;1;0;0" keyTimes="0;0.30;0.33;0.34;0.40;0.60;0.64;1" dur="16s" repeatCount="indefinite"/>
+    </text>
+    <text x="24" y="72" opacity="0">Open a lesson — interactive, in-depth, offline
+      <animate attributeName="opacity" values="0;0;0;0;0;1;1;0" keyTimes="0;0.62;0.65;0.66;0.67;0.70;0.92;1" dur="16s" repeatCount="indefinite"/>
+    </text>
+  </g>
+
+  <!-- ============ SCENE 1+2: mind map ============ -->
+  <g id="map">
+    <animate attributeName="opacity" values="1;1;1;1;1;0;0;0" keyTimes="0;0.60;0.63;0.64;0.65;0.66;1;1" dur="16s" repeatCount="indefinite"/>
+    <!-- edges from root -->
+    <g stroke="#313850" stroke-width="2" fill="none">
+      <path d="M440 270 L300 180"/><path d="M440 270 L580 180"/>
+      <path d="M440 270 L250 300"/><path d="M440 270 L630 300"/>
+      <path d="M440 270 L440 410"/>
+    </g>
+    <!-- branch edges (appear in scene 2) -->
+    <g stroke="#7c7cff" stroke-width="1.6" fill="none" opacity="0" stroke-dasharray="3 4">
+      <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.34;0.40;0.60;0.64" dur="16s" repeatCount="indefinite"/>
+      <path d="M300 180 L185 140"/><path d="M300 180 L210 90"/><path d="M300 180 L350 95"/>
+    </g>
+    <!-- child lessons -->
+    <g opacity="0" font-family="Inter,Segoe UI,Arial" font-size="10.5" font-weight="600">
+      <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.34;0.40;0.60;0.64" dur="16s" repeatCount="indefinite"/>
+      <g><rect x="120" y="129" width="130" height="24" rx="12" fill="#0f1118" stroke="#2a8f6a"/><text x="134" y="145" fill="#b8c1d4">✓ What is data?</text></g>
+      <g><rect x="150" y="79" width="120" height="24" rx="12" fill="#0f1118" stroke="#232838"/><text x="164" y="95" fill="#b8c1d4">Databases 101</text></g>
+      <g><rect x="300" y="84" width="120" height="24" rx="12" fill="#0f1118" stroke="#232838"/><text x="314" y="100" fill="#b8c1d4">AI vs ML vs LLM</text></g>
+    </g>
+    <!-- topic nodes -->
+    <g font-family="Inter,Segoe UI,Arial" font-size="11.5" font-weight="700">
+      <g><rect x="240" y="166" width="120" height="28" rx="14" fill="#191b2e" stroke="#7c7cff"/><text x="258" y="184" fill="#a6a6ff">Foundations</text></g>
+      <g><rect x="528" y="166" width="104" height="28" rx="14" fill="#161922" stroke="#313850"/><text x="546" y="184" fill="#b8c1d4">Roles</text></g>
+      <g><rect x="190" y="286" width="120" height="28" rx="14" fill="#161922" stroke="#313850"/><text x="206" y="304" fill="#b8c1d4">Roadmaps</text></g>
+      <g><rect x="568" y="286" width="116" height="28" rx="14" fill="#161922" stroke="#313850"/><text x="584" y="304" fill="#b8c1d4">Modules</text></g>
+      <g><rect x="372" y="396" width="136" height="28" rx="14" fill="#161922" stroke="#313850"/><text x="388" y="414" fill="#b8c1d4">Core Concepts</text></g>
+    </g>
+    <!-- root -->
+    <g>
+      <rect x="392" y="252" width="96" height="40" rx="14" fill="url(#dg)" filter="url(#ds)"/>
+      <text x="440" y="277" text-anchor="middle" font-family="Inter,Segoe UI,Arial" font-size="14" font-weight="800" fill="#fff">ArchAIst</text>
+    </g>
+  </g>
+
+  <!-- ============ SCENE 3: lesson page ============ -->
+  <g id="lesson" opacity="0">
+    <animate attributeName="opacity" values="0;0;0;0;0;1;1;0" keyTimes="0;0.62;0.65;0.655;0.66;0.67;0.95;1" dur="16s" repeatCount="indefinite"/>
+    <rect x="40" y="70" width="800" height="392" rx="14" fill="#0f1118" stroke="#232838"/>
+    <text x="64" y="112" font-family="Inter,Segoe UI,Arial" font-size="11" font-weight="700" fill="#36d6f5">FOUNDATIONS (LEVEL 0)</text>
+    <text x="64" y="142" font-family="Inter,Segoe UI,Arial" font-size="22" font-weight="800" fill="#eaeefb">AI vs ML vs Deep Learning vs GenAI vs LLM</text>
+    <g font-family="Inter,Segoe UI,Arial" font-size="11" font-weight="700">
+      <rect x="64" y="156" width="52" height="22" rx="11" fill="#191b2e"/><text x="74" y="171" fill="#a6a6ff">Zero</text>
+      <rect x="124" y="156" width="64" height="22" rx="11" fill="#161922" stroke="#232838"/><text x="134" y="171" fill="#8b95ab">8 min</text>
+    </g>
+    <!-- nested AI rings widget -->
+    <g transform="translate(120,210)">
+      <circle cx="120" cy="110" r="108" fill="none" stroke="#2a2f45" stroke-width="2"/>
+      <circle cx="120" cy="110" r="84" fill="none" stroke="#3a3f60" stroke-width="2"/>
+      <circle cx="120" cy="110" r="60" fill="none" stroke="#4a4f80" stroke-width="2"/>
+      <circle cx="120" cy="110" r="36" fill="none" stroke="#7c7cff" stroke-width="2.5">
+        <animate attributeName="stroke" values="#7c7cff;#36d6f5;#7c7cff" dur="2.4s" repeatCount="indefinite"/>
+      </circle>
+      <text x="120" y="22" text-anchor="middle" font-family="Inter" font-size="11" fill="#8b95ab">AI</text>
+      <text x="120" y="46" text-anchor="middle" font-family="Inter" font-size="11" fill="#9aa3ba">ML</text>
+      <text x="120" y="70" text-anchor="middle" font-family="Inter" font-size="11" fill="#b8c1d4">Deep Learning</text>
+      <text x="120" y="114" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="#a6a6ff">LLM</text>
+    </g>
+    <g font-family="Inter,Segoe UI,Arial" font-size="12.5" fill="#b8c1d4">
+      <text x="400" y="232">Each is a more specific kind of the one</text>
+      <text x="400" y="254">around it — like Russian dolls. Click any</text>
+      <text x="400" y="276">ring on the real site to see it explained.</text>
+      <rect x="400" y="300" width="360" height="92" rx="10" fill="#05070c" stroke="#232838"/>
+      <text x="416" y="324" font-family="JetBrains Mono,monospace" font-size="11.5" fill="#7c7cff">from transformers import pipeline</text>
+      <text x="416" y="346" font-family="JetBrains Mono,monospace" font-size="11.5" fill="#e9ecf5">llm = pipeline("text-generation")</text>
+      <text x="416" y="368" font-family="JetBrains Mono,monospace" font-size="11.5" fill="#34d399">▶ run in the browser</text>
+    </g>
+  </g>
+
+  <!-- ============ animated cursor ============ -->
+  <g>
+    <g transform="translate(440,330)">
+      <animateTransform attributeName="transform" type="translate"
+        values="440,330; 300,180; 300,180; 300,180; 305,100; 305,100; 440,180; 440,180"
+        keyTimes="0;0.16;0.30;0.33;0.45;0.62;0.66;1"
+        dur="16s" repeatCount="indefinite" calcMode="spline"
+        keySplines="0.4 0 0.2 1;0 0 1 1;0.4 0 0.2 1;0.4 0 0.2 1;0 0 1 1;0.4 0 0.2 1;0 0 1 1"/>
+      <path d="M0 0 L0 18 L5 14 L8 21 L11 19 L8 12 L14 12 Z" fill="#fff" stroke="#0b0c12" stroke-width="1.2"/>
+    </g>
+    <!-- click pulse -->
+    <circle r="0" fill="none" stroke="#36d6f5" stroke-width="2">
+      <animate attributeName="cx" values="300;300;305;440" keyTimes="0;0.33;0.45;0.66" dur="16s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="180;180;100;180" keyTimes="0;0.33;0.45;0.66" dur="16s" repeatCount="indefinite"/>
+      <animate attributeName="r" values="0;16;0;0;16;0;0;16;0" keyTimes="0;0.31;0.34;0.43;0.46;0.49;0.64;0.67;0.70" dur="16s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;0;0;1;0;0;1;0" keyTimes="0;0.31;0.34;0.43;0.46;0.49;0.64;0.67;0.70" dur="16s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- footer hint -->
+  <text x="856" y="466" text-anchor="end" font-family="Inter,Segoe UI,Arial" font-size="10.5" fill="#8b95ab">Runs 100% offline · no account · no API key</text>
+</svg>

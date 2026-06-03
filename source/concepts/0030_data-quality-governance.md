@@ -19,13 +19,13 @@ Memorise these — they're a great structured answer to "how do you ensure data 
 6. **Uniqueness** — no unintended duplicates. (One row per order.)
 
 ## How you actually enforce quality
-- **Schema validation:** types, nullability, allowed values, primary-key uniqueness, referential integrity.
-- **Business-rule checks:** "amount > 0", "end_date ≥ start_date", "country in valid ISO list."
-- **Reconciliation:** row counts and totals match between source and destination.
-- **Anomaly/freshness monitoring:** alert if today's row count is wildly off, or data is late.
-- **Severity levels:** *fail* (stop the pipeline), *warn* (continue but flag), *info* (log). Write failures to an audit table with rule id, batch id, and sample bad rows.
+Checks run *inside* the pipeline as a **gate** — bad rows get caught before they reach Gold. Toggle the checks below:
 
-Tools: **Great Expectations**, **dbt tests**, **Soda**, **Deequ** (Spark). In code, even simple assertions help:
+<div class="widget-mount" data-widget="dataQuality"></div>
+
+In practice: schema validation, business rules (`amount > 0`), reconciliation (counts match source↔destination), and freshness alerts — each with a **severity** (*fail* stops the run, *warn* flags, *info* logs) and failures written to an audit table.
+
+Tools: **Great Expectations**, **dbt tests**, **Soda**, **Deequ** (Spark). Even simple assertions help:
 ```python
 assert df["amount"].min() >= 0,            "negative amounts found"
 assert df["order_id"].is_unique,           "duplicate order_ids"

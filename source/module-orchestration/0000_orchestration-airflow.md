@@ -19,11 +19,7 @@ Airflow models a workflow as a **DAG** — a **Directed Acyclic Graph**:
 - **Acyclic:** no loops (you can't depend on yourself — it would never finish).
 - **Graph:** tasks (nodes) connected by dependencies (edges).
 
-```text
-extract ──▶ transform ──▶ load ──▶ quality_check
-                  │
-                  └────▶ send_report
-```
+<div class="widget-mount" data-widget="dag"></div>
 
 ## A minimal Airflow DAG
 ```python
@@ -52,21 +48,13 @@ with DAG(
 That `e >> t >> l` line is the magic: it tells Airflow the order. Tasks with no dependency between them run in **parallel**.
 
 ## Key concepts interviewers probe
-- **Operator:** a template for one task. `PythonOperator`, `BashOperator`, `SQLExecuteQueryOperator`, plus cloud-specific ones (run a Spark job, load BigQuery, etc.).
-- **Task vs Task Instance:** a *task* is the definition; a *task instance* is one run of it for a specific date.
-- **Schedule (cron):** when the DAG runs. `0 2 * * *` = 2 AM daily.
-- **Retries & retry_delay:** auto-recover from transient failures.
-- **Backfill / catchup:** running the DAG for past dates it "missed." Often disabled to avoid surprise load.
-- **Idempotency:** each run should be safe to re-run (ties back to the ETL lesson!). Design tasks around a "logical date" so reruns overwrite the right partition.
-- **XCom:** small messages passed between tasks (don't pass big data through it — pass *pointers* like a file path).
-- **Sensors:** tasks that *wait* for a condition (e.g. a file to land) before proceeding.
+- **Operator** — a template for one task (`PythonOperator`, `BashOperator`, cloud ones).
+- **Schedule (cron)** — when it runs. `0 2 * * *` = 2 AM daily.
+- **Retries / catchup** — auto-recover failures; backfill missed dates (often off).
+- **Idempotency** — each run is safe to re-run (key around a "logical date").
+- **XCom / Sensors** — pass small messages; *wait* for a condition (e.g. a file).
 
-## Why orchestration matters (the value)
-- **Dependencies:** guarantees transform never runs before extract finishes.
-- **Scheduling:** runs reliably without a human clicking buttons.
-- **Observability:** a UI showing what ran, what failed, how long it took.
-- **Recovery:** automatic retries + alerting (email/Slack) on failure.
-- **Backfilling:** reprocess history cleanly when logic changes.
+<div class="callout callout-note"><span class="cfor"></span><div><span class="ctitle">Why it matters:</span> dependencies, scheduling, observability, automatic retries + alerts, and clean backfills — all in one place.</div></div>
 
 ## Modern alternatives (good to name-drop)
 Airflow is the incumbent, but know these exist: **Dagster** and **Prefect** (more Pythonic, asset-aware), **dbt** (transformation orchestration in SQL), and cloud-native ones (**AWS Step Functions**, **Azure Data Factory**, **GCP Composer** = managed Airflow).

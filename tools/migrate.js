@@ -15,16 +15,26 @@ vm.runInContext(fs.readFileSync("assets/js/registry.js", "utf8"), sb);
 vm.runInContext("var LP = window.LP;", sb); // expose LP as a global like the browser does
 const LP = sb.window.LP;
 
-// content files in the SAME order index.html includes them
-const FILES = [
+const SRC = "source";
+
+// content files in the SAME order index.html includes them. Prefer the
+// existing manifest (so newly-added groups like a new section survive a
+// re-lock); fall back to the original hardcoded order on first migration.
+const DEFAULT_FILES = [
   "foundations", "roles", "roadmaps", "role-tracks",
   "module-python", "module-sql", "module-data-modeling", "module-etl",
   "module-spark", "module-cloud", "module-orchestration", "module-warehouse",
   "module-streaming", "module-genai", "concepts", "concepts-extra",
   "glossary", "interview-questions", "companies", "companies-extra",
 ];
+let FILES = DEFAULT_FILES;
+try {
+  const m = JSON.parse(fs.readFileSync(path.join(SRC, "_manifest.json"), "utf8"));
+  if (Array.isArray(m) && m.length) FILES = m;     // read BEFORE we wipe source/
+} catch (e) { /* first run — no manifest yet */ }
+// only keep groups that actually have a compiled content/<name>.js
+FILES = FILES.filter((n) => fs.existsSync("content/" + n + ".js"));
 
-const SRC = "source";
 fs.rmSync(SRC, { recursive: true, force: true });
 fs.mkdirSync(SRC, { recursive: true });
 fs.mkdirSync("tools", { recursive: true });

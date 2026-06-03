@@ -2,7 +2,7 @@
    Usage: icon("home"), icon("home","ic-lg"). Returns an <svg> string. */
 (function () {
   var P = {
-    logo: '<path d="M5 7l7-4 7 4v10l-7 4-7-4z"/><path d="M12 3v18M5 7l7 4 7-4"/>',
+    logo: '<path d="M5 20L12 5l7 15"/><path d="M8 14h8"/><circle cx="12" cy="5" r="1.8" fill="currentColor" stroke="none"/><circle cx="5" cy="20" r="1.8" fill="currentColor" stroke="none"/><circle cx="19" cy="20" r="1.8" fill="currentColor" stroke="none"/>',
     search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
     sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/>',
     moon: '<path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z"/>',
@@ -46,6 +46,7 @@
     companies: "building",
     glossary: "book",
     progress: "chart",
+    industries: "building",
   };
 
   function icon(name, cls) {

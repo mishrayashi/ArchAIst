@@ -10,12 +10,28 @@
 
 A complete, beginner-first learning + interview-prep tool for anyone who wants to
 become a **Data Engineer, AI Data Engineer, GenAI Engineer, or LLM Engineer** —
-starting from *absolutely zero* knowledge. Now with interactive animated explainers
-and a built-in **code runner** (Python + SQL, right in the browser).
+starting from *absolutely zero* knowledge. It pairs an **interactive mind map** of
+the whole syllabus with animated explainers and a built-in **code runner** (Python +
+SQL, right in the browser).
 
 It assumes you've never coded, never seen a database, and don't know what "AI" or
 "LLM" even mean. It explains every term, shows real code, lays out step-by-step
 roadmaps, and prepares you for real interviews at real companies.
+
+---
+
+## 🎬 See it in action
+
+<p align="center">
+  <img src="assets/demo.svg" alt="ArchAIst tour — explore the mind map, branch into a topic, open an interactive lesson" width="100%" />
+</p>
+
+<p align="center"><em>Explore the mind map → click a topic to branch into its lessons → open an interactive, in-depth lesson. All offline.</em></p>
+
+> The clip above is an animated walkthrough. To capture a real screen recording,
+> open the site (below) and record the home **mind map**, a topic expanding, and a
+> lesson with one of the interactive widgets — then drop the file in `assets/` and
+> swap the `src` above.
 
 ---
 

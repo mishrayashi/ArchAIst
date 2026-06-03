@@ -536,6 +536,300 @@
     reset();
   };
 
+  /* ---------- 16. GROUP BY animator ---------- */
+  W.groupBy = function (mount) {
+    var body = shell(mount, { icon: "grid", title: "GROUP BY, step by step", sub: "Watch rows collapse into one row per group", tag: "Live" });
+    var rows = [
+      { city: "Mumbai", amt: 300 }, { city: "Delhi", amt: 900 }, { city: "Mumbai", amt: 50 },
+      { city: "Pune", amt: 200 }, { city: "Delhi", amt: 100 }, { city: "Mumbai", amt: 75 },
+    ];
+    var agg = { SUM: function (a) { return a.reduce(function (s, x) { return s + x; }, 0); },
+                COUNT: function (a) { return a.length; },
+                AVG: function (a) { return Math.round(a.reduce(function (s, x) { return s + x; }, 0) / a.length); } };
+    body.innerHTML = '<div class="widget-controls" id="gbBtns"></div>' +
+      '<div class="cap-scenario" id="gbSql" style="margin-bottom:12px;font-family:var(--mono);font-size:12.5px"></div>' +
+      '<div class="two-col"><div><h6 class="tcap">input rows</h6><div id="gbIn"></div></div>' +
+      '<div><h6 class="tcap">result (one row per city)</h6><div id="gbOut"></div></div></div>' +
+      '<div class="widget-controls" style="margin-top:12px"><button class="w-btn primary" id="gbPlay">' + window.icon("play", "ic-sm") + " Replay</button></div>" +
+      '<div class="w-hint">GROUP BY buckets rows that share a value (here, <b>city</b>), then an aggregate (<b>SUM/COUNT/AVG</b>) squashes each bucket into a single number. Many rows in → one row per group out.</div>';
+    var palette = { Mumbai: "var(--accent)", Delhi: "var(--accent-2)", Pune: "var(--green)" };
+    var btns = body.querySelector("#gbBtns");
+    Object.keys(agg).forEach(function (k) { var b = document.createElement("button"); b.className = "w-btn"; b.textContent = k; b.dataset.k = k; btns.appendChild(b); });
+    var fn = "SUM";
+    function color(c) { return palette[c] || "var(--text-faint)"; }
+    function render() {
+      body.querySelector("#gbSql").textContent = "SELECT city, " + fn + "(amount) FROM orders GROUP BY city;";
+      body.querySelectorAll("#gbBtns .w-btn").forEach(function (b) { b.classList.toggle("active", b.dataset.k === fn); });
+      var inEl = body.querySelector("#gbIn"); inEl.innerHTML = "";
+      rows.forEach(function (r, i) {
+        var d = document.createElement("div"); d.className = "jrow"; d.style.borderLeft = "4px solid " + color(r.city);
+        d.style.opacity = 0; d.textContent = r.city + " · " + r.amt;
+        inEl.appendChild(d);
+        var t = setTimeout(function () { d.style.transition = "opacity .3s"; d.style.opacity = 1; }, i * 110); addTimer(t);
+      });
+      var groups = {}; rows.forEach(function (r) { (groups[r.city] = groups[r.city] || []).push(r.amt); });
+      var outEl = body.querySelector("#gbOut"); outEl.innerHTML = "";
+      Object.keys(groups).forEach(function (c, i) {
+        var d = document.createElement("div"); d.className = "jrow kept"; d.style.borderLeft = "4px solid " + color(c);
+        d.style.opacity = 0; d.innerHTML = "<b>" + c + "</b> → " + agg[fn](groups[c]);
+        outEl.appendChild(d);
+        var t = setTimeout(function () { d.style.transition = "opacity .4s"; d.style.opacity = 1; }, rows.length * 110 + i * 200); addTimer(t);
+      });
+    }
+    btns.querySelectorAll(".w-btn").forEach(function (b) { b.addEventListener("click", function () { fn = b.dataset.k; render(); }); });
+    body.querySelector("#gbPlay").addEventListener("click", render);
+    render();
+  };
+
+  /* ---------- 17. Partition pruning ---------- */
+  W.partition = function (mount) {
+    var body = shell(mount, { icon: "database", title: "Partition pruning", sub: "Why partitioning makes queries skip data", tag: "Try it" });
+    var parts = ["2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06"];
+    body.innerHTML = '<div class="widget-controls" style="align-items:center">Query month: ' +
+      '<select class="w-input" id="ptSel">' + parts.map(function (p) { return "<option>" + p + "</option>"; }).join("") + "</select>" +
+      '<button class="w-btn" id="ptAll">No partitioning</button></div>' +
+      '<div class="cap-scenario" id="ptSql" style="margin:10px 0;font-family:var(--mono);font-size:12.5px"></div>' +
+      '<div class="flow" id="ptParts" style="flex-wrap:wrap;gap:8px"></div>' +
+      '<div class="w-hint" id="ptHint"></div>';
+    var sel = body.querySelector("#ptSel"), wrap = body.querySelector("#ptParts");
+    function draw(scanAll) {
+      var pick = sel.value;
+      wrap.innerHTML = "";
+      var scanned = 0;
+      parts.forEach(function (p) {
+        var hit = scanAll || p === pick;
+        if (hit) scanned++;
+        var d = document.createElement("div");
+        d.className = "flow-box" + (hit ? " lit" : "");
+        d.style.opacity = hit ? 1 : 0.32;
+        d.innerHTML = '<div class="fb-title">' + p + '</div><div class="fb-sub">' + (hit ? "scanned" : "skipped") + "</div>";
+        wrap.appendChild(d);
+      });
+      body.querySelector("#ptSql").textContent = "SELECT * FROM sales WHERE month = '" + pick + "';";
+      var pct = Math.round((scanned / parts.length) * 100);
+      body.querySelector("#ptHint").innerHTML = scanAll
+        ? "Without partitioning the engine must read <b>all " + parts.length + " months</b> (100% I/O) to find one."
+        : "Partitioned by month → the engine reads only <b>1 of " + parts.length + "</b> folders (~" + pct + "% of the data). That skipping is <b>partition pruning</b> — huge cost savings.";
+    }
+    sel.addEventListener("change", function () { draw(false); });
+    body.querySelector("#ptAll").addEventListener("click", function () { draw(true); });
+    draw(false);
+  };
+
+  /* ---------- 18. Industry explorer ---------- */
+  W.industry = function (mount) {
+    var body = shell(mount, { icon: "building", title: "Company-type explorer", sub: "Pick a type — see how the data work changes", tag: "Explore" });
+    var types = {
+      "Product-based": { tag: "Builds & owns one product", one: "You go deep on one product's data for years.",
+        rows: [["Focus", "Depth — one domain, one codebase"], ["Data", "Long-lived, owned, with SLAs"], ["Pace", "Steady, iterative"], ["Pay", "Often highest (equity)"], ["Examples", "Google, Netflix, Flipkart, SaaS"]] },
+      "Service-based": { tag: "Builds for many clients", one: "You rotate across clients, domains and stacks.",
+        rows: [["Focus", "Breadth — many domains"], ["Data", "New stack each project"], ["Pace", "Fast ramp, delivery-driven"], ["Pay", "Steady; grows with switches"], ["Examples", "Infosys, TCS, Accenture, Wipro"]] },
+      "FinTech (domain)": { tag: "Finance — product or service", one: "Correctness, audit trails and compliance rule everything.",
+        rows: [["Focus", "Domain rigor on top of product/service"], ["Data", "Exactly-once, reconciled, audited"], ["Pace", "Careful — money is unforgiving"], ["Pay", "Strong; values domain knowledge"], ["Examples", "Razorpay, Stripe, Zerodha"]] },
+    };
+    var keys = Object.keys(types);
+    body.innerHTML = '<div class="role-pick" id="inPick"></div><div id="inDetail"></div>';
+    var pick = body.querySelector("#inPick");
+    keys.forEach(function (k) { var b = document.createElement("button"); b.className = "role-opt"; b.dataset.k = k; b.innerHTML = '<div class="ro-name">' + k + '</div><div class="ro-tag">' + types[k].tag + "</div>"; pick.appendChild(b); });
+    var detail = body.querySelector("#inDetail");
+    function show(k) {
+      var d = types[k];
+      pick.querySelectorAll(".role-opt").forEach(function (b) { b.classList.toggle("active", b.dataset.k === k); });
+      detail.innerHTML = '<div class="role-detail"><h4>' + k + '</h4><p style="margin:2px 0 10px">' + d.one + "</p>" +
+        '<table class="w-table"><tbody>' + d.rows.map(function (r) { return "<tr><td style=\"font-weight:700;width:34%\">" + r[0] + "</td><td>" + r[1] + "</td></tr>"; }).join("") + "</tbody></table></div>";
+    }
+    pick.querySelectorAll(".role-opt").forEach(function (b) { b.addEventListener("click", function () { show(b.dataset.k); }); });
+    show("Product-based");
+  };
+
+  /* ---------- 19. Airflow DAG runner ---------- */
+  W.dag = function (mount) {
+    var body = shell(mount, { icon: "flow", title: "Airflow DAG, running", sub: "Tasks fire in dependency order; a failure retries", tag: "Live" });
+    // levels = columns; tasks run left→right, same level in parallel
+    var tasks = [
+      { id: "extract", lvl: 0, deps: [] },
+      { id: "transform", lvl: 1, deps: ["extract"] },
+      { id: "quality", lvl: 2, deps: ["transform"] },
+      { id: "load", lvl: 2, deps: ["transform"] },
+      { id: "report", lvl: 3, deps: ["quality", "load"] },
+    ];
+    body.innerHTML = '<div class="dag" id="dagWrap" style="display:flex;gap:30px;align-items:center;flex-wrap:wrap"></div>' +
+      '<div class="widget-controls" style="margin-top:14px"><button class="w-btn primary" id="dagRun">' + window.icon("play", "ic-sm") + " Run DAG</button>" +
+      '<label class="w-hint" style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="dagFail"> simulate a failure (watch the retry)</label></div>' +
+      '<div class="cap-scenario" id="dagNote"></div>';
+    var wrap = body.querySelector("#dagWrap"), note = body.querySelector("#dagNote");
+    var byLvl = {}; tasks.forEach(function (t) { (byLvl[t.lvl] = byLvl[t.lvl] || []).push(t); });
+    function build() {
+      wrap.innerHTML = "";
+      Object.keys(byLvl).forEach(function (lvl) {
+        var col = document.createElement("div"); col.style.display = "flex"; col.style.flexDirection = "column"; col.style.gap = "10px";
+        byLvl[lvl].forEach(function (t) {
+          var n = document.createElement("div"); n.className = "dag-node lazy"; n.dataset.id = t.id;
+          n.innerHTML = '<span class="dn-type">task</span><span>' + t.id + "</span>";
+          col.appendChild(n);
+        });
+        wrap.appendChild(col);
+        if (+lvl < 3) { var a = document.createElement("span"); a.className = "flow-arrow"; a.innerHTML = window.icon("arrowRight", "ic-sm"); wrap.appendChild(a); }
+      });
+      note.innerHTML = "A <b>DAG</b> = tasks + dependencies. Tasks on the same column have no dependency, so Airflow runs them <b>in parallel</b>.";
+    }
+    function nodeEl(id) { return wrap.querySelector('.dag-node[data-id="' + id + '"]'); }
+    function run() {
+      build();
+      var failOn = body.querySelector("#dagFail").checked ? "quality" : null;
+      var order = tasks.slice();
+      var done = {}, i = 0, retried = false;
+      body.querySelector("#dagRun").disabled = true;
+      function step() {
+        // find next runnable task whose deps are done
+        var t = order.find(function (x) { return !done[x.id] && x.deps.every(function (d) { return done[d]; }); });
+        if (!t) { note.innerHTML = "All tasks succeeded. ✓ The DAG run is complete."; body.querySelector("#dagRun").disabled = false; return; }
+        var el = nodeEl(t.id); el.classList.remove("lazy"); el.classList.add("running");
+        var to = setTimeout(function () {
+          if (t.id === failOn && !retried) {
+            retried = true; el.classList.remove("running"); el.classList.add("t-action");
+            el.style.borderColor = "var(--red)";
+            note.innerHTML = "<b style=\"color:var(--red)\">" + t.id + " failed!</b> Airflow waits, then <b>retries</b> (retries=3). Only this task re-runs — not the whole pipeline.";
+            var rt = setTimeout(function () { el.style.borderColor = ""; el.classList.remove("t-action"); el.classList.add("running"); var rt2 = setTimeout(finish, 600); addTimer(rt2); }, 1100); addTimer(rt);
+            function finish() { el.classList.remove("running"); el.classList.add("executed"); done[t.id] = true; var n = setTimeout(step, 350); addTimer(n); }
+          } else {
+            el.classList.remove("running"); el.classList.add("executed"); done[t.id] = true;
+            var n = setTimeout(step, 350); addTimer(n);
+          }
+        }, 600); addTimer(to);
+      }
+      step();
+    }
+    body.querySelector("#dagRun").addEventListener("click", run);
+    build();
+  };
+
+  /* ---------- 20. Row vs columnar storage ---------- */
+  W.columnar = function (mount) {
+    var body = shell(mount, { icon: "database", title: "Row vs columnar storage", sub: "Why warehouses read only the columns you ask for", tag: "Try it" });
+    var cols = ["id", "name", "city", "amount"];
+    body.innerHTML = '<div class="widget-controls" style="flex-wrap:wrap">Query: <code style="font-family:var(--mono);font-size:12px">SELECT</code>' +
+      cols.map(function (c) { return '<label class="w-hint" style="gap:5px"><input type="checkbox" data-c="' + c + '"' + (c === "amount" ? " checked" : "") + "> " + c + "</label>"; }).join("") + "</div>" +
+      '<div class="two-col" style="margin-top:10px"><div><h6 class="tcap">Row storage</h6><div id="rowS"></div><div class="proc-count" id="rowMsg"></div></div>' +
+      '<div><h6 class="tcap">Columnar storage</h6><div id="colS"></div><div class="proc-count" id="colMsg"></div></div></div>' +
+      '<div class="w-hint">Both hold the same 4 rows. <b>Row</b> stores whole rows together, so it must read everything. <b>Columnar</b> stores each column together, so it reads <b>only the selected columns</b> — far less I/O. That + compression is why warehouses are fast.</div>';
+    var rows = 4;
+    function picked() { return cols.filter(function (c) { return body.querySelector('input[data-c="' + c + '"]').checked; }); }
+    function draw() {
+      var sel = picked();
+      var rowEl = body.querySelector("#rowS"); rowEl.innerHTML = "";
+      for (var r = 0; r < rows; r++) {
+        var blk = document.createElement("div"); blk.className = "jrow matched"; blk.style.display = "flex"; blk.style.gap = "4px"; blk.style.padding = "3px";
+        cols.forEach(function (c) { var cell = document.createElement("span"); cell.textContent = c; cell.style.cssText = "flex:1;text-align:center;border-radius:4px;padding:2px;font-size:11px;background:var(--accent-soft)"; blk.appendChild(cell); });
+        rowEl.appendChild(blk);
+      }
+      var colEl = body.querySelector("#colS"); colEl.innerHTML = ""; colEl.style.display = "flex"; colEl.style.gap = "4px";
+      cols.forEach(function (c) {
+        var on = sel.indexOf(c) !== -1;
+        var stack = document.createElement("div"); stack.style.cssText = "flex:1;display:flex;flex-direction:column;gap:4px;opacity:" + (on ? 1 : 0.25);
+        var h = document.createElement("div"); h.textContent = c; h.style.cssText = "text-align:center;font-size:10px;font-weight:700"; stack.appendChild(h);
+        for (var r2 = 0; r2 < rows; r2++) { var cell2 = document.createElement("span"); cell2.style.cssText = "height:14px;border-radius:3px;background:" + (on ? "var(--accent)" : "var(--surface-3)"); stack.appendChild(cell2); }
+        colEl.appendChild(stack);
+      });
+      body.querySelector("#rowMsg").innerHTML = "reads <b>" + (rows * cols.length) + "</b> cells (all of them)";
+      body.querySelector("#colMsg").innerHTML = "reads <b>" + (rows * sel.length) + "</b> cells (" + Math.round(sel.length / cols.length * 100) + "% of the data)";
+    }
+    cols.forEach(function (c) { body.querySelector('input[data-c="' + c + '"]').addEventListener("change", draw); });
+    draw();
+  };
+
+  /* ---------- 21. LLM next-token predictor ---------- */
+  W.nextToken = function (mount) {
+    var body = shell(mount, { icon: "sparkles", title: "An LLM predicts the next token", sub: "Pick the next token, one step at a time", tag: "Try it" });
+    var steps = [
+      { ctx: "The data engineer built a", opts: [["pipeline", 0.62], ["model", 0.21], ["sandwich", 0.05]] },
+      { ctx: "The data engineer built a pipeline to", opts: [["move", 0.48], ["clean", 0.33], ["sing", 0.02]] },
+      { ctx: "The data engineer built a pipeline to move", opts: [["data", 0.71], ["houses", 0.04], ["mountains", 0.02]] },
+    ];
+    body.innerHTML = '<div class="cap-scenario" id="ntCtx" style="font-family:var(--mono);font-size:13px;min-height:24px"></div>' +
+      '<div class="widget-controls" id="ntOpts" style="flex-wrap:wrap"></div>' +
+      '<div class="widget-controls" style="margin-top:10px"><button class="w-btn" id="ntReset">' + window.icon("refresh", "ic-sm") + " Reset</button></div>" +
+      '<div class="w-hint">That\'s the whole trick: given the text so far, the model assigns a <b>probability</b> to every possible next token and emits one, then repeats. <b>Temperature</b> decides how often it picks a lower-probability option (creativity vs focus). It isn\'t “looking things up.”</div>';
+    var ctxEl = body.querySelector("#ntCtx"), optsEl = body.querySelector("#ntOpts");
+    var i = 0, built = "";
+    function render() {
+      if (i >= steps.length) { ctxEl.innerHTML = built + ' <span style="color:var(--green)">… and so on, one token at a time.</span>'; optsEl.innerHTML = ""; return; }
+      built = steps[i].ctx;
+      ctxEl.innerHTML = built + ' <span style="color:var(--accent);font-weight:700">▍</span>';
+      optsEl.innerHTML = "";
+      steps[i].opts.forEach(function (o) {
+        var b = document.createElement("button"); b.className = "w-btn"; if (o[1] >= 0.4) b.classList.add("primary");
+        b.innerHTML = o[0] + ' <span style="opacity:.6;font-size:11px">' + Math.round(o[1] * 100) + "%</span>";
+        b.addEventListener("click", function () { i++; render(); });
+        optsEl.appendChild(b);
+      });
+    }
+    body.querySelector("#ntReset").addEventListener("click", function () { i = 0; render(); });
+    render();
+  };
+
+  /* ---------- 22. HLD vs LLD zoom toggle ---------- */
+  W.hldlld = function (mount) {
+    var body = shell(mount, { icon: "layers", title: "HLD vs LLD — same system, two zooms", sub: "Toggle the zoom level", tag: "Try it" });
+    body.innerHTML = '<div class="widget-controls"><button class="w-btn active" id="hlBtn">HLD · bird\'s-eye</button><button class="w-btn" id="llBtn">LLD · zoomed in</button></div>' +
+      '<div id="hlView" style="margin-top:6px"></div><div class="w-hint" id="hlHint"></div>';
+    var hld = '<div class="flow" style="flex-wrap:wrap">' +
+      ["Sources", "Ingestion: Kafka", "Lake: S3", "Spark", "Warehouse", "BI · ML · API"].map(function (s, i, a) {
+        return '<div class="flow-stage"><div class="flow-box' + (i === 4 ? " lit" : "") + '"><div class="fb-title">' + s + "</div></div>" + (i < a.length - 1 ? '<span class="flow-arrow">' + window.icon("arrowRight", "ic-sm") + "</span>" : "") + "</div>";
+      }).join("") + "</div>";
+    var lld = '<table class="w-table"><thead><tr><th>column</th><th>type</th><th>note</th></tr></thead><tbody>' +
+      [["sale_id", "BIGINT", "PRIMARY KEY"], ["date_key", "INT", "FK → dim_date"], ["product_key", "INT", "FK → dim_product"], ["amount", "NUMERIC(12,2)", "measure"], ["quantity", "INT", "measure"]]
+        .map(function (r, i) { return '<tr class="' + (i === 0 ? "w-row-new" : "") + '"><td>' + r[0] + "</td><td>" + r[1] + "</td><td>" + r[2] + "</td></tr>"; }).join("") +
+      "</tbody></table>";
+    function show(which) {
+      var hl = which === "hld";
+      body.querySelector("#hlBtn").classList.toggle("active", hl);
+      body.querySelector("#llBtn").classList.toggle("active", !hl);
+      body.querySelector("#hlView").innerHTML = hl ? hld : lld;
+      body.querySelector("#hlHint").innerHTML = hl
+        ? "<b>HLD</b> = the boxes &amp; arrows: components, data flow, tech choices. \"We'll use a warehouse with a star schema.\""
+        : "<b>LLD</b> = inside one box: the exact <code>fact_sales</code> schema — columns, keys, partitioning. \"Here's the table and its upsert logic.\"";
+    }
+    body.querySelector("#hlBtn").addEventListener("click", function () { show("hld"); });
+    body.querySelector("#llBtn").addEventListener("click", function () { show("lld"); });
+    show("hld");
+  };
+
+  /* ---------- 23. Data-quality gate ---------- */
+  W.dataQuality = function (mount) {
+    var body = shell(mount, { icon: "target", title: "The data-quality gate", sub: "Toggle checks; watch bad rows get caught", tag: "Try it" });
+    var rows = [
+      { id: 1, cust: "Ravi", amt: 300, ok: true },
+      { id: 2, cust: "", amt: 50, bad: "completeness", note: "missing customer" },
+      { id: 3, cust: "Sara", amt: -90, bad: "validity", note: "amount < 0" },
+      { id: 1, cust: "Ravi", amt: 300, bad: "uniqueness", note: "duplicate id" },
+      { id: 5, cust: "Amit", amt: 120, ok: true },
+    ];
+    var checks = { completeness: true, validity: true, uniqueness: true };
+    body.innerHTML = '<div class="widget-controls" id="dqChecks"></div>' +
+      '<div id="dqRows" style="margin-top:6px"></div><div class="w-hint" id="dqMsg"></div>';
+    var cEl = body.querySelector("#dqChecks");
+    Object.keys(checks).forEach(function (k) {
+      var l = document.createElement("label"); l.className = "w-hint"; l.style.gap = "5px";
+      l.innerHTML = '<input type="checkbox" data-c="' + k + '" checked> ' + k + " check";
+      cEl.appendChild(l);
+    });
+    function draw() {
+      Object.keys(checks).forEach(function (k) { checks[k] = body.querySelector('input[data-c="' + k + '"]').checked; });
+      var pass = 0, caught = 0;
+      body.querySelector("#dqRows").innerHTML = rows.map(function (r) {
+        var blocked = r.bad && checks[r.bad];
+        if (blocked) caught++; else pass++;
+        var cls = blocked ? "dropped" : "kept matched";
+        var tag = blocked ? ' <b style="color:var(--red)">✗ ' + r.note + "</b>" : ' <span style="color:var(--green)">✓ passed</span>';
+        return '<div class="jrow ' + cls + '">id ' + r.id + " · " + (r.cust || "—") + " · ₹" + r.amt + tag + "</div>";
+      }).join("");
+      body.querySelector("#dqMsg").innerHTML = "<b>" + pass + "</b> rows reach Gold, <b>" + caught + "</b> caught at the gate. Turn checks off and the bad rows leak through — that's why quality runs <i>inside</i> the pipeline as code.";
+    }
+    Object.keys(checks).forEach(function (k) { body.querySelector('input[data-c="' + k + '"]').addEventListener("change", draw); });
+    draw();
+  };
+
   /* ---------- registry + mounting ---------- */
   function mountAll(root) {
     clearAll();

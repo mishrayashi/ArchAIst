@@ -792,5 +792,469 @@
       "Data Engineer",
       "AI Data Engineer"
     ]
+  },
+  {
+    "q": "Infosys: Find the second-highest salary in each department.",
+    "a": "Top-N-per-group with a window function — the single most common Infosys SQL ask:\n```sql\nWITH r AS (\n  SELECT dept_id, emp_id, salary,\n         DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rnk\n  FROM employees)\nSELECT dept_id, emp_id, salary FROM r WHERE rnk = 2;\n```\n**Why `DENSE_RANK` not `ROW_NUMBER`?** If two people tie for the top salary, `ROW_NUMBER` would skip the true 2nd-highest; `DENSE_RANK` keeps ties on the same rank so rank 2 is genuinely the second *distinct* salary. Mention the classic no-window fallback too (`MAX(salary) WHERE salary < (SELECT MAX...)`) to show range.",
+    "topic": "SQL",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: What is the difference between WHERE and HAVING?",
+    "a": "`WHERE` filters **rows before** grouping; `HAVING` filters **groups after** aggregation. You cannot use an aggregate in `WHERE`:\n```sql\nSELECT dept, COUNT(*) AS n\nFROM emp\nWHERE active = 1        -- per-row filter, runs first\nGROUP BY dept\nHAVING COUNT(*) > 5;    -- per-group filter, runs after GROUP BY\n```\nOrder of logical execution interviewers love: **FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY**. That ordering also explains why a `SELECT` alias can't be used in `WHERE` but can in `ORDER BY`.",
+    "topic": "SQL",
+    "difficulty": "easy",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: Explain different types of JOINs with a real example.",
+    "a": "Given `customers` and `orders`:\n- **INNER** — only customers who placed orders.\n- **LEFT** — every customer, with NULLs where they have no order (great for 'who never ordered': `LEFT JOIN ... WHERE o.id IS NULL`).\n- **RIGHT** — every order, even orphaned ones (rare; usually rewritten as LEFT).\n- **FULL OUTER** — everything from both, matched where possible (reconciliation).\n- **CROSS** — Cartesian product (every pairing; used for calendars/spines).\n- **SELF JOIN** — a table to itself (employee→manager).\nTry the interactive JOIN visualiser in the SQL module to *see* which rows survive each join.",
+    "topic": "SQL",
+    "difficulty": "easy",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: How do you detect and delete duplicate rows in SQL?",
+    "a": "Detect with a grouping count, delete safely with a window:\n```sql\n-- detect\nSELECT email, COUNT(*) FROM users GROUP BY email HAVING COUNT(*) > 1;\n\n-- delete all but the first occurrence (Postgres/SQL Server)\nWITH d AS (\n  SELECT id, ROW_NUMBER() OVER (PARTITION BY email ORDER BY id) AS rn\n  FROM users)\nDELETE FROM users WHERE id IN (SELECT id FROM d WHERE rn > 1);\n```\nKey point: pick a deterministic `ORDER BY` so the row you keep is well-defined. Prevent recurrence with a `UNIQUE` constraint.",
+    "topic": "SQL",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: What is an index, and when can it actually hurt performance?",
+    "a": "An index is a sorted side-structure (usually a **B-tree**) that turns an O(n) scan into an O(log n) lookup for selective predicates, joins, and `ORDER BY`. It **hurts** when: writes are heavy (every INSERT/UPDATE/DELETE must maintain it), the column is low-cardinality (e.g. a boolean — the planner ignores it), or you over-index and bloat storage. Composite-index order matters (left-most prefix rule). Always justify an index with the query pattern and confirm with `EXPLAIN`/the query plan rather than guessing.",
+    "topic": "SQL",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: What is the difference between a list and a tuple, and when do you use each?",
+    "a": "**List** = mutable, variable-length (`[]`); **tuple** = immutable, fixed (`()`). Use a tuple for fixed records/coordinates and as **dict keys / set members** (hashable because immutable); use a list for collections you mutate. Tuples are slightly lighter and signal 'this won't change'. Bonus interview point: immutability is about the *binding*, so a tuple holding a list can still have that inner list mutated.",
+    "topic": "Python",
+    "difficulty": "easy",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: Explain list comprehension vs generator, and why generators matter for data work.",
+    "a": "A list comprehension `[x*x for x in xs]` builds the whole list in memory; a generator `(x*x for x in xs)` yields lazily, one item at a time. For a 50 GB file you stream line-by-line with a generator so memory stays flat:\n```python\ndef clean(path):\n    with open(path) as f:\n        for line in f:          # lazy, O(1) memory\n            yield line.strip().lower()\n```\nThis lazy pattern is exactly how Spark transformations behave (build a plan, run on an action) — a great bridge answer.",
+    "topic": "Python",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: What are *args and **kwargs?",
+    "a": "`*args` collects extra **positional** arguments into a tuple; `**kwargs` collects extra **keyword** arguments into a dict. They let a function accept any signature and forward it on:\n```python\ndef log_call(fn, *args, **kwargs):\n    print('calling', fn.__name__)\n    return fn(*args, **kwargs)   # unpacking on the way out\n```\nThe single `*` and `**` at the call site *unpack* iterables/dicts into arguments — the mirror image of collecting.",
+    "topic": "Python",
+    "difficulty": "easy",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: How would you read a large CSV that doesn't fit in memory with pandas?",
+    "a": "Stream it in chunks and aggregate incrementally:\n```python\nimport pandas as pd\ntotal = 0\nfor chunk in pd.read_csv('big.csv', chunksize=100_000, usecols=['amount']):\n    total += chunk['amount'].sum()\n```\nAlso: select only needed columns (`usecols`), set tight `dtype`s (e.g. `category`), or step up to a lazy/columnar engine (**Polars, DuckDB, or Spark**) when chunking gets awkward. The principle is the same as the generator answer — don't materialise what you can stream.",
+    "topic": "Python",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: Explain star vs snowflake schema and which you'd pick.",
+    "a": "**Star**: one central fact table with denormalised dimensions hanging directly off it — fewer joins, fast BI queries, easy for analysts. **Snowflake**: dimensions are further normalised into sub-dimensions — less storage and cleaner hierarchies, but more joins and complexity. Default to **star** for analytics/BI (read-optimised, simpler); reach for snowflake only when a dimension is huge and its sub-hierarchies are reused or change independently. Explore the star-schema widget in the Data Modeling module.",
+    "topic": "Data Modeling",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: What is a slowly changing dimension (SCD) Type 2 and how do you implement it?",
+    "a": "SCD2 preserves **history**: instead of overwriting a changed attribute, you **expire** the current row and **insert a new versioned row**. Typical columns: a surrogate key, `start_date`, `end_date`, and `is_current`:\n1. On change, set the old row's `end_date` = today and `is_current = false`.\n2. Insert a new row with a fresh surrogate key, the new value, `start_date` = today, `end_date` = 9999-12-31, `is_current = true`.\nFacts join to the **version valid at event time**, so a customer who moved city still reports correctly for past sales. Try the SCD2 simulator in the Data Modeling module. Contrast with SCD1 (overwrite, no history) and SCD3 (one prior-value column).",
+    "topic": "Data Modeling",
+    "difficulty": "hard",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: What's the difference between OLTP and OLAP?",
+    "a": "**OLTP** (transactional) — many small, concurrent reads/writes, normalised schema, row-oriented, optimised for *correctness and latency* (e.g. the orders DB behind an app). **OLAP** (analytical) — fewer but huge aggregating queries, denormalised star schemas, **columnar** storage, optimised for *scan throughput* (the warehouse behind dashboards). You move data OLTP → OLAP via ETL/ELT. Knowing this split explains why we don't run analytics directly on production OLTP.",
+    "topic": "Data Modeling",
+    "difficulty": "easy",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: What is the difference between ETL and ELT, and when is ELT better?",
+    "a": "**ETL** transforms data *before* loading (transform on a separate engine, then load clean data). **ELT** loads raw into a powerful warehouse/lakehouse first, then transforms *in place* with SQL (dbt-style). **ELT wins** with modern cloud warehouses (Snowflake/BigQuery/Databricks) because: compute is elastic and cheap, raw data is preserved for re-processing, and analysts can iterate in SQL. ETL still fits when you must cleanse/mask **before** landing (compliance) or the target can't transform at scale.",
+    "topic": "ETL",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: How do you make a data pipeline idempotent, and why does it matter?",
+    "a": "Idempotent = re-running the same load produces the same result, no duplicates. Techniques: **MERGE/upsert** on a business key instead of blind INSERT; **partition overwrite** (delete-then-write the day's partition) so a retry replaces rather than appends; deterministic surrogate keys; and a watermark/high-water-mark for incremental pulls. It matters because pipelines *will* be retried (failures, backfills, at-least-once delivery) — without idempotency every retry corrupts the table.",
+    "topic": "ETL",
+    "difficulty": "hard",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: How would you design an incremental load instead of full refresh?",
+    "a": "Track a **watermark** — the max `updated_at` (or an ingest sequence) successfully loaded last run. Each run pulls only `WHERE updated_at > :watermark`, MERGEs into the target, then advances the watermark transactionally. Handle late-arriving and updated rows with the MERGE (not append-only), and keep full-refresh as a fallback for schema changes or corruption. This cuts cost/time massively versus reloading everything nightly.",
+    "topic": "ETL",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: Explain Spark's lazy evaluation and the difference between transformations and actions.",
+    "a": "**Transformations** (`select`, `filter`, `join`, `groupBy`) are *lazy* — they only build a logical plan (a DAG). Nothing runs until an **action** (`show`, `count`, `write`, `collect`) triggers execution. Laziness lets Spark's **Catalyst** optimiser see the whole pipeline and fuse/reorder it (predicate pushdown, column pruning) before moving a single row. Watch the lazy-vs-action widget in the Spark module. Practical tip: avoid `collect()` on big data — it pulls everything to the driver.",
+    "topic": "Spark",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: What is data skew in Spark and how do you fix it?",
+    "a": "Skew = one key has far more rows than others, so a few tasks run forever while the rest finish (straggler). Fixes: **salting** (append a random suffix to the hot key, aggregate, then strip it), **broadcast join** when one side is small (avoids the shuffle entirely), enable **AQE** (adaptive query execution splits skewed partitions automatically), and pre-aggregate before the wide shuffle. Diagnose it in the Spark UI: look for one stage with a couple of huge, slow tasks.",
+    "topic": "Spark",
+    "difficulty": "hard",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: repartition() vs coalesce() — what's the difference?",
+    "a": "`repartition(n)` does a **full shuffle** and can increase or decrease partitions, producing evenly sized ones — use before a heavy join or to fix skew. `coalesce(n)` only **decreases** partitions and avoids a full shuffle by merging adjacent ones — cheap, ideal right before writing to avoid thousands of tiny files. Rule of thumb: `coalesce` to shrink output cheaply, `repartition` when you need balance or more parallelism.",
+    "topic": "Spark",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: Compare a data lake, a data warehouse, and a lakehouse.",
+    "a": "**Data lake** — cheap object storage (S3/ADLS/GCS) holding raw data in any format; flexible but easy to turn into a 'swamp' without governance. **Warehouse** — structured, schema-on-write, columnar, fast SQL/BI, pricier. **Lakehouse** (Delta/Iceberg/Hudi) — adds warehouse features (ACID transactions, schema enforcement, time travel) *on top of* the lake, so you get one platform for BI **and** ML on open formats. The **medallion** (Bronze→Silver→Gold) pattern organises a lakehouse — see the medallion widget.",
+    "topic": "Cloud",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: Which AWS services would you use to build a batch data pipeline?",
+    "a": "A common reference stack: **S3** (raw + curated storage) → **AWS Glue** or **EMR/Spark** (transform) → **Redshift** or **Athena** (serving/BI), orchestrated by **Step Functions** or **MWAA (managed Airflow)**, with **Glue Data Catalog** for metadata and **CloudWatch** for monitoring. Map each to its job: storage, compute, orchestration, catalog, query, observability. Azure/GCP equivalents (ADLS+Synapse+Data Factory / GCS+BigQuery+Dataflow+Composer) show breadth.",
+    "topic": "Cloud",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: Design a data pipeline to ingest and process daily sales files from 500 stores.",
+    "a": "**Clarify** first: volume, file format, SLA, late files. **HLD**: stores drop files to **object storage** (landing zone) → an event/schedule triggers ingestion → validate schema & row counts → load **Bronze** (raw) → transform to **Silver** (cleaned, deduped, typed) → aggregate **Gold** marts for BI → orchestrate with **Airflow** (one DAG, partitioned by date, retries + alerts). Make each load **idempotent** (partition overwrite) so reruns are safe, handle late/missing files with sensors, and add data-quality checks (row counts, null thresholds) that fail the run loudly. Capacity, monitoring, and backfill strategy round it out.",
+    "topic": "System Design",
+    "difficulty": "hard",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: How would you ensure data quality in a pipeline?",
+    "a": "Bake checks into the pipeline as gates, not afterthoughts: **schema validation** (types/columns), **volume checks** (row counts within expected range), **null/uniqueness/range** constraints on key columns, **referential integrity** (no orphan foreign keys), and **freshness** (data arrived on time). Tools: Great Expectations / dbt tests / Deequ. On failure, **fail the run and alert** rather than publishing bad Gold data. Track results over time so you catch drift, and quarantine bad records for inspection.",
+    "topic": "Concepts",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: What is RAG and why use it instead of just prompting an LLM?",
+    "a": "**RAG (Retrieval-Augmented Generation)** grounds an LLM in *your* data: embed the user's question into a vector, find the nearest document chunks in a **vector DB** (cosine similarity), and pass those chunks as context so the model answers from real, current, citable sources. It beats plain prompting because it reduces **hallucination**, works on private/post-training-cutoff data, and is cheaper than fine-tuning. Walk through the RAG widget in the GenAI module. Trade-offs: retrieval quality and chunking strategy make or break it.",
+    "topic": "Concepts",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "GenAI Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: What's the difference between fine-tuning and RAG, and when do you pick each?",
+    "a": "**RAG** injects knowledge at query time via retrieval — best for facts that change, private documents, and citation needs; no training required. **Fine-tuning** adjusts the model's weights on examples — best for teaching a *style, format, or task behaviour* (e.g. always output a specific JSON, a domain tone) rather than facts. They compose: fine-tune for behaviour, RAG for knowledge. Pick RAG first (cheaper, updatable); fine-tune when prompting+RAG can't get the consistency you need.",
+    "topic": "Concepts",
+    "difficulty": "hard",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "GenAI Engineer",
+      "LLM Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: Why do you want to join Infosys, and how do you keep your skills current?",
+    "a": "Tie your answer to **scale and breadth**: Infosys exposes you to many clients, domains, and the in-house upskilling culture (Lex, certifications, Mysore training). For staying current, be concrete: hands-on projects, building things end-to-end (like the pipeline you just described), reading docs/changelogs, and certifications relevant to the role. Show genuine curiosity and a learning habit — service companies value adaptability across client tech stacks.",
+    "topic": "Behavioral",
+    "difficulty": "easy",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer",
+      "GenAI Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: Tell me about a time you handled a production data issue under pressure.",
+    "a": "STAR again, emphasising **calm process**: detected via monitoring/alert → triaged impact (which downstream tables/reports) → contained (paused the pipeline, communicated to stakeholders) → root-caused (bad upstream file / schema change / skew) → fixed and **backfilled** idempotently → added a guardrail (data-quality check or alert) so it can't silently recur. End with the lesson learned. Showing prevention, not just firefighting, is what separates a senior answer.",
+    "topic": "Behavioral",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: What is a primary key vs a foreign key vs a unique key?",
+    "a": "**Primary key** uniquely identifies each row — not null, one per table (often a surrogate id). **Foreign key** is a column that references another table's primary key, enforcing referential integrity (no orphan rows). **Unique key** guarantees no duplicates in a column but *can* allow one NULL and you can have several per table (e.g. `email`). Mnemonic: PK = identity, FK = relationship, UK = no-duplicates constraint.",
+    "topic": "SQL",
+    "difficulty": "easy",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: Write SQL to find employees who earn more than the average salary of their department.",
+    "a": "Correlated subquery (or window) — a frequent Infosys ask:\n```sql\n-- correlated subquery\nSELECT e.* FROM employees e\nWHERE e.salary > (\n  SELECT AVG(salary) FROM employees d WHERE d.dept_id = e.dept_id);\n\n-- window-function version (one pass, usually faster)\nWITH x AS (\n  SELECT *, AVG(salary) OVER (PARTITION BY dept_id) AS dept_avg\n  FROM employees)\nSELECT * FROM x WHERE salary > dept_avg;\n```\nMention that the window version avoids re-scanning per row.",
+    "topic": "SQL",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: What is the difference between UNION and UNION ALL?",
+    "a": "`UNION` stacks two result sets **and removes duplicates** (so it does a sort/hash to dedupe — extra cost). `UNION ALL` keeps **everything, including duplicates**, and is therefore faster. Use `UNION ALL` by default when you know rows can't overlap or duplicates are fine; only pay for `UNION` when you actually need distinct rows. Both require the same column count and compatible types.",
+    "topic": "SQL",
+    "difficulty": "easy",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: Explain ACID properties with a simple example.",
+    "a": "ACID guarantees reliable transactions:\n- **Atomicity** — all steps happen or none (a money transfer debits *and* credits, or rolls back).\n- **Consistency** — the DB moves from one valid state to another (constraints hold).\n- **Isolation** — concurrent transactions don't corrupt each other (as if run one-by-one).\n- **Durability** — once committed, it survives a crash (written to disk/log).\nTry the ACID atomicity widget in the Core Concepts module — it lets you 'crash' a transfer mid-way and watch the rollback.",
+    "topic": "Concepts",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: How is Python's memory managed (garbage collection)?",
+    "a": "CPython uses **reference counting** as the primary mechanism — each object tracks how many references point to it; when the count hits zero it's freed immediately. A supplementary **generational garbage collector** handles **reference cycles** (objects that reference each other but are otherwise unreachable). Practical implications: avoid needless global references, be aware that cycles need the GC, and use generators/`with` blocks to release resources promptly.",
+    "topic": "Python",
+    "difficulty": "hard",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: What is the GIL and when does it actually matter?",
+    "a": "The **Global Interpreter Lock** lets only one thread execute Python bytecode at a time in CPython. It matters for **CPU-bound** multithreading (threads won't use multiple cores — use `multiprocessing` or native libs instead). It barely matters for **I/O-bound** work (network/disk waits release the GIL, so threads/async still help). For data engineering, heavy lifting in NumPy/pandas/Spark runs in C/JVM outside the GIL anyway.",
+    "topic": "Python",
+    "difficulty": "hard",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: How would you handle missing or null values in a dataset?",
+    "a": "First understand *why* they're missing, then choose per column: **drop** rows/columns if sparse and non-critical; **impute** (mean/median/mode, forward-fill for time series, or a model-based estimate); or **flag** with an 'is_missing' indicator so the model can learn from the absence. In SQL use `COALESCE`/`IFNULL`; in pandas `fillna`/`dropna`. The wrong move is silently dropping data — always quantify how much you removed and why.",
+    "topic": "Concepts",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer",
+      "Data Scientist"
+    ]
+  },
+  {
+    "q": "Infosys: What is partitioning and bucketing in Hive/Spark, and why use them?",
+    "a": "**Partitioning** splits a table into directories by a column (e.g. `date=2026-06-01`) so queries that filter on it read only relevant folders (**partition pruning**) — huge I/O savings. **Bucketing** hashes a column into a fixed number of files within each partition, which speeds up joins/aggregations on that column (matching buckets join without a full shuffle). Rule: partition on low-cardinality, frequently-filtered columns (date, region); bucket on high-cardinality join keys (user_id).",
+    "topic": "Spark",
+    "difficulty": "hard",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: Explain the medallion (Bronze/Silver/Gold) architecture.",
+    "a": "A lakehouse pattern that refines data in layers: **Bronze** = raw, as-ingested (immutable landing); **Silver** = cleaned, deduplicated, typed, conformed; **Gold** = business-level aggregates/marts ready for BI and ML. Benefits: raw is always replayable, each layer has a clear contract, and failures are isolated to a stage. See the medallion widget in the Warehouse/Lakehouse module to watch data refine Bronze→Gold.",
+    "topic": "ETL",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: How would you schedule and monitor data pipelines in production?",
+    "a": "Use an orchestrator like **Airflow** (DAGs of tasks with dependencies, retries, backfills, SLAs). For monitoring: task-level alerting (on failure/SLA miss), data-quality checks as gates, freshness/volume metrics, and idempotent tasks so retries are safe. Log lineage so you can trace a bad number to its source. Mention the Airflow lesson in the Orchestration module; key concepts are DAG, operator, sensor, retry, and backfill.",
+    "topic": "System Design",
+    "difficulty": "medium",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: A query suddenly got slow in production — how do you debug it?",
+    "a": "Systematic triage: (1) reproduce and check **`EXPLAIN`/the query plan** for full scans, bad join order, or missing index use; (2) check whether **data volume** grew or **stats are stale** (re-analyze); (3) look for **lock/contention** or resource limits; (4) verify an index wasn't dropped or a predicate changed (e.g. now non-sargable like `WHERE func(col)=…`); (5) check for **skew** if it's distributed. Fix the root cause (index, rewrite, partition) and confirm with the plan — don't just throw hardware at it.",
+    "topic": "SQL",
+    "difficulty": "hard",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Infosys: What does a typical data engineering interview at Infosys look like?",
+    "a": "Usually: (1) an **online/aptitude + basic coding** round, (2) a **technical round** heavy on SQL (joins, GROUP BY, window functions, query writing), Python basics, and data-warehousing/ETL concepts, sometimes a Spark or cloud question, and (3) an **HR/managerial** round on projects, communication, and fit. They probe **fundamentals deeply** rather than exotic trivia — be rock-solid on SQL, normalization, SCD, ETL vs ELT, and be able to defend every line on your resume with STAR stories.",
+    "topic": "Behavioral",
+    "difficulty": "easy",
+    "companies": [
+      "Infosys"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
   }
 ]

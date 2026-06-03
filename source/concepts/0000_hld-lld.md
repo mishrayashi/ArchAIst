@@ -24,13 +24,9 @@ Building a house: <strong>HLD</strong> is the architect's overall plan — where
 - **Scalability & reliability strategy:** how it handles growth and failures.
 - **Trade-offs:** batch vs streaming, SQL vs NoSQL, cost vs latency.
 
-HLD output looks like a **block diagram**:
-```text
-[Sources] → [Ingestion: Kafka] → [Lake: S3] → [Spark transforms]
-                                                   ↓
-                              [Warehouse: Snowflake] → [BI / ML / API]
-                          (orchestrated by Airflow, monitored, secured by IAM)
-```
+Toggle the two zoom levels to feel the difference:
+
+<div class="widget-mount" data-widget="hldlld"></div>
 
 ## LLD — what it includes
 - **Schemas:** exact table/column definitions, keys, indexes, partitioning.
@@ -39,18 +35,7 @@ HLD output looks like a **block diagram**:
 - **Algorithms & data structures** for specific logic.
 - **Error handling, retries, idempotency** at the detail level.
 
-LLD output looks like a **table schema** or **class diagram**:
-```sql
-CREATE TABLE fact_sales (
-  sale_id      BIGINT,
-  date_key     INT      NOT NULL,   -- FK → dim_date
-  product_key  INT      NOT NULL,   -- FK → dim_product
-  customer_key INT      NOT NULL,   -- FK → dim_customer
-  amount       NUMERIC(12,2),
-  quantity     INT,
-  PRIMARY KEY (sale_id)
-) PARTITION BY RANGE (date_key);
-```
+LLD output is the concrete **schema, keys, and partitioning** (see the zoomed-in view in the toggle above) — plus class/API design and idempotency.
 
 ## How they relate
 HLD comes first (the shape), LLD second (the details). HLD says "we'll use a warehouse with a star schema." LLD says "here is fact_sales, its columns, keys, partition strategy, and the upsert logic." A good engineer can zoom between both fluidly.

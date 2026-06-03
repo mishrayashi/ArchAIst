@@ -41,25 +41,14 @@ Storing as **Parquet** (columnar, compressed) instead of CSV makes queries far c
 - **Principle of least privilege:** grant only the minimum access needed. This is the #1 cloud security rule.
 
 ## Cost awareness — a real engineering skill
-Cloud bills can explode. Good data engineers control cost:
-- **Storage tiers:** move old data to cheaper "cold" storage.
-- **Right-size compute:** don't run a 50-node cluster for a tiny job.
-- **Auto-terminate** idle clusters.
-- **Partition + columnar formats** so queries scan less (BigQuery/Athena charge by bytes scanned!).
-- **Spot/preemptible VMs** for fault-tolerant batch jobs (much cheaper).
+Cloud bills explode without care. Control it: **cold storage tiers**, **right-size + auto-terminate** compute, **partition + columnar** formats (scan-billed engines charge by bytes!), and **spot VMs** for batch.
 
 ## A typical cloud data architecture
-```text
- Sources ──▶ Ingestion ──▶ Object storage (lake, Bronze/Silver/Gold)
-                │                  │
-          (Kinesis/             Spark / SQL transforms
-           Pub/Sub for             │
-           streaming)              ▼
-                            Data warehouse (BigQuery/Redshift/Snowflake)
-                                   │
-                       BI dashboards · ML · GenAI apps
-            (all scheduled by Airflow/Composer/Data Factory, secured by IAM)
-```
+The same shape on every cloud — storage → compute → warehouse → serve:
+
+<div class="widget-mount" data-widget="pipeline"></div>
+
+Scheduled by an orchestrator (Airflow/Composer/Data Factory), secured by **IAM**.
 
 ## Getting hands-on for free
 All three clouds have **free tiers**. Good first exercises:

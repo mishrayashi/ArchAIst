@@ -177,6 +177,11 @@
           '<div class="stat"><div class="num">' + totalTerms + '</div><div class="lbl">Glossary terms</div></div>' +
         "</div>" +
       "</div>" +
+      '<section class="map-section">' +
+        '<div class="map-head"><h2>' + ic("network", "ic-sm") + ' Explore the map</h2>' +
+        '<p>Every topic and lesson as a living mind map. Click a topic to branch into its lessons, then click a lesson to open it.</p></div>' +
+        '<div id="mindmapHost" class="mindmap-host"></div>' +
+      "</section>" +
       '<div class="callout callout-note"><span class="cfor"></span><div><span class="ctitle">New here? Follow this order:</span> Foundations → Find My Role → pick a Roadmap → work through the Modules → drill the Interview Bank. Progress saves automatically in this browser.</div></div>' +
       "<h2>Explore the academy</h2>" +
       '<div class="card-grid">' + cards + "</div>" +
@@ -187,6 +192,9 @@
         '<a class="card" href="#/glossary"><div class="card-icon">' + icKey("glossary") + '</div><div class="card-title">Plain-English Glossary</div><div class="card-desc">Every scary term, explained simply.</div><div class="card-count">' + ic("chevronRight","ic-sm") + totalTerms + " terms</div></a>" +
         '<a class="card" href="#/progress"><div class="card-icon">' + icKey("progress") + '</div><div class="card-title">My Progress</div><div class="card-desc">Track lessons completed across the academy.</div><div class="card-count">' + ic("chevronRight","ic-sm") + totalLessons + " lessons total</div></a>" +
       "</div>";
+
+    const mapHost = view.querySelector("#mindmapHost");
+    if (mapHost && window.ArchMap) window.ArchMap.render(mapHost);
   }
 
   let _ordered = null;

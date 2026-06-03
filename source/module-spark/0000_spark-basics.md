@@ -96,7 +96,9 @@ spark.sql("""
     .partitionBy("city")          # creates city=Mumbai/, city=Delhi/ folders
     .parquet("s3://bucket/gold/city_sales/"))
 ```
-Partitioning output by a common filter column (like date or city) means future queries scan only the folders they need — huge speedups.
+Partitioning output by a common filter column (like date or city) means future queries scan only the folders they need — huge speedups. Pick a month below and watch the engine **skip** the folders it doesn't need (this is *partition pruning*, a favourite interview topic):
+
+<div class="widget-mount" data-widget="partition"></div>
 
 ## Delta Lake / Lakehouse (you'll hear this constantly)
 **Delta Lake** adds database-like reliability to files in a data lake: ACID transactions, schema enforcement, time travel, and efficient **MERGE** (great for SCD2). The "lakehouse" idea = the cheap storage of a lake + the reliability of a warehouse. Databricks is the main vendor.

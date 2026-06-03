@@ -10,6 +10,7 @@ window.LP = (function () {
   const pageMap = {};
   const questions = [];     // { q, a, topic, difficulty, companies[], roles[] }
   const terms = [];         // { term, def, see[] }
+  const links = [];         // { from, to, label } — optional mind-map cross-links
 
   function section(def) {
     if (sectionMap[def.id]) return;
@@ -50,15 +51,23 @@ window.LP = (function () {
   }
   function termsBulk(arr) { arr.forEach(term); }
 
+  function link(l) {
+    // l: { from, to, label } — endpoints are page ids, section ids,
+    // a reference route (interview/companies/glossary/progress) or "root".
+    if (l && l.from && l.to) links.push(l);
+  }
+  function linksBulk(arr) { arr.forEach(link); }
+
   return {
-    section, page, question, questionsBulk, term, termsBulk,
+    section, page, question, questionsBulk, term, termsBulk, link, linksBulk,
     _sections: sections, _sectionMap: sectionMap,
     _pages: pages, _pageMap: pageMap,
-    _questions: questions, _terms: terms,
+    _questions: questions, _terms: terms, _links: links,
     getSections: () => sections.slice().sort((a, b) => a.order - b.order),
     getPages: (sid) => pages.filter((p) => p.section === sid).sort((a, b) => a.order - b.order),
     getPage: (id) => pageMap[id],
     getQuestions: () => questions,
     getTerms: () => terms.slice().sort((a, b) => a.term.toLowerCase().localeCompare(b.term.toLowerCase())),
+    getLinks: () => links.slice(),
   };
 })();
