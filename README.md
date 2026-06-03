@@ -20,8 +20,6 @@ roadmaps, and prepares you for real interviews at real companies.
 
 ---
 
-## 🎬 See it in action
-
 <p align="center">
   <img src="assets/demo.svg" alt="ArchAIst tour — explore the mind map, branch into a topic, open an interactive lesson" width="100%" />
 </p>
