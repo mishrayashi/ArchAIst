@@ -42,12 +42,12 @@ phone. Your progress is saved privately in your own browser.
 
 | Section | What you get |
 |---------|--------------|
-| 🌱 **Foundations (Level 0)** | What is data, databases, programming, the cloud, and AI/ML/GenAI/LLM — explained for a complete beginner. |
-| 🧭 **Which Role Is Right For Me?** | Crystal-clear difference between Data Engineer, AI Data Engineer, GenAI Engineer, LLM Engineer, ML Engineer, Data Scientist, Data Analyst — with day-to-day work, skills, and how they collaborate. |
-| 🗺️ **Roadmaps & Study Plans** | Step-by-step paths (incl. a focused 90-day sprint) from zero to job-ready, plus *how* to learn effectively. |
-| 🛠️ **Hands-On Modules** | Real code & concepts: Python, SQL (basic→advanced), Data Modeling + **SCD**, ETL/ELT, **Spark/PySpark**, Cloud (AWS/Azure/GCP), Airflow orchestration, Warehouses/Lakehouse, Kafka streaming, and **GenAI/RAG/LLMs**. |
-| 🏛️ **Core Concepts & System Design** | **HLD vs LLD**, ACID, CAP theorem, data quality & governance, file formats (Parquet etc.) — the deep stuff even seniors fumble. |
-| 🏢 **Industries & Company Types** | Product vs service vs FinTech and more — where data/AI engineers work and how to choose. |
+| 🌱 **Foundations** | What is data, databases, programming, the cloud, and AI/ML/GenAI/LLM — explained for a complete beginner. |
+| 🧭 **Career Paths** | Crystal-clear difference between Data Engineer, AI Data Engineer, GenAI Engineer, LLM Engineer, ML Engineer, Data Scientist, Data Analyst — with day-to-day work, skills, and how they collaborate. |
+| 🗺️ **Roadmaps** | Step-by-step paths (incl. a focused 90-day sprint) from zero to job-ready, plus *how* to learn effectively. |
+| 🛠️ **Core Modules** | Real code & concepts: Python, SQL (basic→advanced), Data Modeling + **SCD**, ETL/ELT, **Spark/PySpark**, Cloud (AWS/Azure/GCP), Airflow orchestration, Warehouses/Lakehouse, Kafka streaming, and **GenAI/RAG/LLMs**. |
+| 🏛️ **System Design & Concepts** | **HLD vs LLD**, ACID, CAP theorem, data quality & governance, file formats (Parquet etc.) — the deep stuff even seniors fumble. |
+| 🏢 **Industry Landscape** | Product vs service vs FinTech and more — where data/AI engineers work and how to choose. |
 | 💬 **Interview Question Bank** | Curated Q&A with model answers, filterable by topic, difficulty, role, and company. |
 | 🏢 **Company-wise Prep** | Representative questions for top companies — including an in-depth **Infosys** set — across data/AI engineering roles. |
 | 📖 **Plain-English Glossary** | Every scary term explained as if you've never heard it. |
@@ -63,10 +63,10 @@ phones.
 ## How to study (the intended path)
 
 1. **Foundations** → understand the words and the big picture.
-2. **Which Role Is Right For Me?** → pick a direction.
+2. **Career Paths** → pick a direction.
 3. **Roadmaps** → choose your plan.
-4. **Hands-On Modules** → learn the tools and write the code yourself.
-5. **Core Concepts** → master the interview-heavy theory.
+4. **Core Modules** → learn the tools and write the code yourself.
+5. **System Design & Concepts** → master the interview-heavy theory.
 6. **Interview Bank + Company prep** → drill daily, answer out loud first.
 
 New here? The site greets you with this exact order — just start at the top.
@@ -109,6 +109,6 @@ to job-ready. Good luck. You've got this. 🚀
 
 <img src="assets/ym-logo.svg" alt="YM — Yashi Mishra" width="56" align="left" />
 
-**Yashi Mishra** — original idea, content, and build of **ArchAIst**.
+**Yashi Mishra** — content, and build of **ArchAIst**.
 
 <br clear="left"/>

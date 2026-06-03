@@ -1,7 +1,7 @@
 [
   {
     "id": "concepts",
-    "title": "Core Concepts & System Design",
+    "title": "System Design & Concepts",
     "icon": "🏛️",
     "blurb": "HLD, LLD, ACID, CAP, data quality — the deep stuff interviews love."
   }
