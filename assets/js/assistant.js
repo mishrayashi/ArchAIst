@@ -263,8 +263,13 @@
 
       if (engine) {
         var thinking = addMsg("bot", '<span class="ai-typing"><i></i><i></i><i></i></span>');
-        generate(query, hits).then(function (text) {
-          thinking.innerHTML = mdLite(text) + sourcesBlock(hits);
+        var acc = "";
+        generate(query, hits, function (partial) {
+          acc = partial;
+          thinking.innerHTML = mdLite(partial);   // stream: render as tokens arrive
+          log.scrollTop = log.scrollHeight;
+        }).then(function (text) {
+          thinking.innerHTML = mdLite((text || acc) || "") + sourcesBlock(hits);
           log.scrollTop = log.scrollHeight;
         }).catch(function () {
           thinking.innerHTML = extractiveAnswer(query, hits);
@@ -316,18 +321,26 @@
           String(h.item.text).replace(/```[\s\S]*?```/g, " ").replace(/\s+/g, " ").trim().slice(0, 700);
       }).join("\n\n");
     }
-    function generate(query, hits) {
+    function generate(query, hits, onToken) {
       var sys = "You are Archie, a friendly study assistant for the ArchAIst academy (data & AI engineering and interview prep). " +
         "Answer ONLY using the provided context from the academy. If the context doesn't cover it, say so briefly and suggest a related lesson. " +
         "Be clear and beginner-friendly but precise. Never answer questions outside data/AI/interview topics. " +
         "Reply directly in plain prose — 2 to 4 short sentences, or a few '-' bullets if listing. " +
         "Do NOT show step-by-step reasoning, do NOT write 'Step 1/Step 2' or 'The final answer is', " +
         "do NOT use LaTeX or math notation (no $...$, no \\boxed{}), and do NOT use markdown headings (#).";
-      var usr = "Context:\n" + context(hits) + "\n\nQuestion: " + query + "\n\nAnswer:";
-      return engine.chat.completions.create({
-        messages: [{ role: "system", content: sys }, { role: "user", content: usr }],
-        temperature: 0.4, max_tokens: 400,
-      }).then(function (r) { return (r.choices[0].message.content || "").trim(); });
+      var usr = "Context:\n" + context(hits) + "\n\nQuestion: " + query + "\n\nAnswer in 2-4 short sentences:";
+      return (async function () {
+        var stream = await engine.chat.completions.create({
+          messages: [{ role: "system", content: sys }, { role: "user", content: usr }],
+          temperature: 0.3, max_tokens: 256, stream: true,
+        });
+        var reply = "";
+        for await (var chunk of stream) {
+          var delta = (chunk.choices && chunk.choices[0] && chunk.choices[0].delta && chunk.choices[0].delta.content) || "";
+          if (delta) { reply += delta; if (onToken) onToken(reply); }
+        }
+        return reply.trim();
+      })();
     }
 
     function setStatus(t) { statusEl.textContent = t; }
