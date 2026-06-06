@@ -350,13 +350,19 @@ body {
 .code-block .copy-btn.copied { background: var(--green); color: #fff; border-color: transparent; }
 
 /* tables */
-.view table { width: 100%; border-collapse: separate; border-spacing: 0; margin: 20px 0; font-size: 14px; display: block; overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
-.view th, .view td { padding: 11px 14px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); text-align: left; vertical-align: top; }
-.view th:last-child, .view td:last-child { border-right: none; }
+/* Size to content (not forced full-width) so short 2-column tables don't
+   stretch across the page with a big empty right side; wide tables still
+   cap at the column width and scroll. */
+.view table { width: fit-content; max-width: 100%; border-collapse: separate; border-spacing: 0; margin: 22px 0; font-size: 14px; display: block; overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); }
+/* Cleaner: horizontal row separators only (no busy vertical grid lines). */
+.view th, .view td { padding: 11px 16px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
 .view tbody tr:last-child td { border-bottom: none; }
-.view th { background: var(--surface-2); font-weight: 700; }
-.view tbody tr { transition: background .12s; }
-.view tbody tr:hover { background: var(--accent-soft); }
+.view th { background: var(--surface-2); font-family: var(--font-display); font-weight: 600; font-size: 13px; color: var(--text); border-bottom: 1px solid var(--border-strong); white-space: nowrap; }
+/* Hoverable rows: clear highlight + a bold accent bar on the first cell, like the roadmap cards. */
+.view tbody tr { transition: background .14s, color .14s; }
+.view tbody tr:hover { background: color-mix(in srgb, var(--accent) 13%, var(--surface)); }
+.view tbody tr:hover td:first-child { box-shadow: inset 4px 0 0 var(--accent); color: var(--accent-strong); }
+.view tbody tr:hover td:first-child strong { color: var(--accent-strong); }
 
 /* ---------- Callouts (no emoji — typographic badges) ---------- */
 .callout {
@@ -646,10 +652,12 @@ body {
 .flow-link { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 7px 0; color: var(--text-faint); font-size: 11.5px; }
 .flow-link .ic { color: var(--accent); transform: rotate(90deg); }
 .flow-title { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--text-faint); margin: 14px 0 8px; }
-.flow.flow-row { flex-direction: row; flex-wrap: wrap; align-items: center; max-width: none; gap: 2px 0; }
-.flow.flow-row .flow-link { padding: 0 3px; }
+/* Horizontal flow: keep on one line, scroll inside its own box if too wide
+   (never overflow/cut off the page); equal-height nodes so it never looks broken. */
+.flow.flow-row { flex-direction: row; flex-wrap: nowrap; align-items: stretch; max-width: none; gap: 0; overflow-x: auto; padding-bottom: 6px; }
+.flow.flow-row .flow-link { padding: 0 7px; flex: 0 0 auto; }
 .flow.flow-row .flow-link .ic { transform: none; }
-.flow.flow-row .flow-node { padding: 9px 13px; }
+.flow.flow-row .flow-node { flex: 0 0 auto; max-width: 240px; padding: 9px 13px; display: flex; flex-direction: column; justify-content: center; }
 .flow.flow-row .flow-node strong { font-size: 13px; }
 .tone-bronze { border-left: 3px solid #bd8a5e; }
 .tone-silver { border-left: 3px solid #9aa8c0; }
