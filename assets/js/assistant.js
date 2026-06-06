@@ -291,8 +291,24 @@
         }).join("") + "</div>";
     }
     function mdLite(t) {
-      return "<p>" + esc(t).replace(/\n{2,}/g, "</p><p>").replace(/\n/g, "<br>")
-        .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>") + "</p>";
+      var s = String(t);
+      // Strip LaTeX/math artifacts the local model sometimes emits, keeping the
+      // inner text: \boxed{X} -> X, $...$ / \(...\) / \[...\] -> inner content.
+      s = s.replace(/\\boxed\s*\{([^}]*)\}/g, "$1")
+           .replace(/\$\$?\s*\\?([^$]*?)\s*\$\$?/g, "$1")
+           .replace(/\\\[([\s\S]*?)\\\]/g, "$1")
+           .replace(/\\\(([\s\S]*?)\\\)/g, "$1")
+           .replace(/\\(?:text|mathrm|mathbf|displaystyle|left|right|quad)\s*/g, "")
+           .replace(/\\times/g, "×").replace(/\\to/g, "→").replace(/\\,/g, " ");
+      s = esc(s);
+      // Headings -> a bold line; markdown bullets -> a real bullet.
+      s = s.replace(/^\s{0,3}#{1,6}\s*(.+?)\s*$/gm, "<strong>$1</strong>")
+           .replace(/^\s*[-*]\s+/gm, "• ");
+      // Inline bold.
+      s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+      // Drop any leftover stray braces / lone LaTeX backslashes.
+      s = s.replace(/[{}]/g, "").replace(/\\(?=[A-Za-z])/g, "");
+      return "<p>" + s.replace(/\n{2,}/g, "</p><p>").replace(/\n/g, "<br>") + "</p>";
     }
     function context(hits) {
       return hits.map(function (h, i) {
@@ -303,7 +319,10 @@
     function generate(query, hits) {
       var sys = "You are Archie, a friendly study assistant for the ArchAIst academy (data & AI engineering and interview prep). " +
         "Answer ONLY using the provided context from the academy. If the context doesn't cover it, say so briefly and suggest a related lesson. " +
-        "Be clear and beginner-friendly but precise. Never answer questions outside data/AI/interview topics.";
+        "Be clear and beginner-friendly but precise. Never answer questions outside data/AI/interview topics. " +
+        "Reply directly in plain prose — 2 to 4 short sentences, or a few '-' bullets if listing. " +
+        "Do NOT show step-by-step reasoning, do NOT write 'Step 1/Step 2' or 'The final answer is', " +
+        "do NOT use LaTeX or math notation (no $...$, no \\boxed{}), and do NOT use markdown headings (#).";
       var usr = "Context:\n" + context(hits) + "\n\nQuestion: " + query + "\n\nAnswer:";
       return engine.chat.completions.create({
         messages: [{ role: "system", content: sys }, { role: "user", content: usr }],
