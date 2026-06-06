@@ -810,5 +810,55 @@
       "AI Data Engineer",
       "GenAI Engineer"
     ]
+  },
+  {
+    "q": "What is a DAG in Spark?",
+    "a": "A **DAG** (Directed Acyclic Graph) is the plan Spark builds from your transformations — **directed** (data flows one way) and **acyclic** (no loops). Each node is a transformation step. It's built **lazily** and only executed when an **action** runs, which lets the Catalyst optimizer improve the plan before any data moves.",
+    "topic": "Spark",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "What's the difference between narrow and wide dependencies in Spark?",
+    "a": "- **Narrow:** each parent partition feeds **one** child partition — no data movement. e.g. `map`, `filter`, `select`, `withColumn`.\n- **Wide:** a child partition needs data from **many** parent partitions, forcing a **shuffle** across the network. e.g. `groupBy`, `join`, `distinct`, `reduceByKey`.\n\nWide dependencies are where stages split and where performance is won or lost — minimise shuffles.",
+    "topic": "Spark",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "What creates a new stage in a Spark job?",
+    "a": "A **shuffle boundary** — i.e. a **wide dependency**. Spark pipelines narrow transformations together into one stage; the moment data must be shuffled (`groupBy`, `join`, `distinct`, `repartition`) it ends the current stage and starts a new one. Fewer shuffles → fewer stages → faster jobs.",
+    "topic": "Spark",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "When does a Spark DAG actually execute?",
+    "a": "Only when an **action** is called (`show`, `count`, `collect`, `write`, `save`). Transformations are **lazy** — they just extend the DAG. Each action triggers a **job**, which Spark splits into stages and tasks and runs. Handy follow-up: one action = one job.",
+    "topic": "Spark",
+    "difficulty": "easy",
+    "companies": [],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Explain the DAG → stages → tasks relationship in Spark.",
+    "a": "**DAG** = the full graph of transformations. Spark splits it into **stages** at every shuffle boundary (wide dependency). Each stage then runs as a set of **tasks** — **one task per partition**, all in parallel across executors. So: DAG → stages (at shuffles) → tasks (per partition).",
+    "topic": "Spark",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "Data Engineer"
+    ]
   }
 ]

@@ -1256,5 +1256,138 @@
       "Data Engineer",
       "AI Data Engineer"
     ]
+  },
+  {
+    "q": "Netflix: Find the top 10 users by total watch hours in the last month.",
+    "a": "Aggregate, then rank:\n```sql\nSELECT user_id, SUM(watch_seconds)/3600.0 AS hours\nFROM views\nWHERE event_date >= date_trunc('month', current_date) - interval '1 month'\nGROUP BY user_id\nORDER BY hours DESC\nLIMIT 10;\n```\nAt scale, pre-aggregate daily watch time into a Gold table so this is a cheap read, not a full scan of raw events.",
+    "topic": "SQL",
+    "difficulty": "medium",
+    "companies": [
+      "Netflix"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Netflix: How do you compute per-session watch duration from raw clickstream events?",
+    "a": "**Sessionize**: order each user's events by time and start a new session whenever the gap exceeds a threshold (say 30 min), then aggregate within a session.\n\n```sql\nWITH gaps AS (\n  SELECT user_id, ts,\n    CASE WHEN ts - LAG(ts) OVER (PARTITION BY user_id ORDER BY ts) > interval '30 min'\n         OR LAG(ts) OVER (PARTITION BY user_id ORDER BY ts) IS NULL\n    THEN 1 ELSE 0 END AS new_sess\n  FROM events)\nSELECT user_id,\n       SUM(new_sess) OVER (PARTITION BY user_id ORDER BY ts) AS session_id, ts\nFROM gaps;\n```\nThen `MAX(ts) - MIN(ts)` per session. In streaming, use **session windows** (Spark/Flink).",
+    "topic": "SQL",
+    "difficulty": "hard",
+    "companies": [
+      "Netflix"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Netflix: Design a data model for user watch history at scale.",
+    "a": "A **fact table** `fact_watch` (user_id, content_id, start_ts, watch_seconds, device_id, date) partitioned by **date**, with **dimensions** for user, content, and device. Keep it append-only; pre-aggregate (daily watch per user/content) into Gold for fast BI. Partition + cluster (Z-ORDER / Liquid Clustering) on the common filters (date, user). Keep raw events in Bronze for reprocessing.",
+    "topic": "Data Modeling",
+    "difficulty": "medium",
+    "companies": [
+      "Netflix"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Netflix: A nightly job's runtime jumped from 45 minutes to 3 hours. How do you find the root cause?",
+    "a": "Triage systematically, don't 'rerun and pray':\n- **Data volume:** did input size spike or a backfill run? Compare row counts vs history.\n- **Skew:** Spark UI — is one task/partition far slower (a new hot key)?\n- **Shuffle / spill:** more shuffle, disk spill, or GC pressure?\n- **Source changes:** schema drift, many small files, slower upstream.\n- **Cluster:** fewer executors, autoscaling lag, noisy neighbours.\n\nCompare the slow run's Spark UI and metrics against a healthy baseline.",
+    "topic": "Spark",
+    "difficulty": "hard",
+    "companies": [
+      "Netflix"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Netflix: How do you handle data quality in a stream — drift, late data, and duplicates?",
+    "a": "- **Late data:** event-time processing with **watermarks** to bound how long to wait, plus windowing.\n- **Duplicates:** idempotent writes — dedupe on an event key (`dropDuplicates` + watermark) or upsert with **MERGE**.\n- **Schema drift:** schema enforcement/evolution (Auto Loader `_rescued_data`); validate critical fields.\n- **Quality gates:** assertions (DLT **Expectations**) plus freshness / row-count monitoring that **alerts** rather than silently dropping.",
+    "topic": "Streaming",
+    "difficulty": "hard",
+    "companies": [
+      "Netflix"
+    ],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Netflix: How would you design real-time ingestion from millions of devices?",
+    "a": "Devices → a **message bus** (Kafka / Kinesis / Pub-Sub) partitioned by a high-cardinality key (device_id) for parallelism → a **stream processor** (Spark Structured Streaming / Flink) to parse, dedupe, sessionize → land in **Bronze Delta** with checkpointing → refine to Silver/Gold. Design for **backpressure**, **exactly-once** via checkpoints, autoscaling, and a **dead-letter queue** for bad events.",
+    "topic": "Streaming",
+    "difficulty": "hard",
+    "companies": [
+      "Netflix"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Nike: From a stream of logs, return the top-K most frequent error messages in real time.",
+    "a": "Windowed count + top-K: in Spark Structured Streaming, `groupBy(window(ts,'5 minutes'), error_msg).count()`, then rank within each window and keep the top K. For a memory-cheap approximate answer, use a **Count-Min Sketch** / heavy-hitters algorithm. Emit per sliding window so the 'top errors' stay current.",
+    "topic": "Streaming",
+    "difficulty": "medium",
+    "companies": [
+      "Nike"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Nike: Remove duplicate rows, keeping only the most recent by timestamp.",
+    "a": "Rank per key by timestamp and keep the newest:\n```sql\nDELETE FROM t WHERE id IN (\n  SELECT id FROM (\n    SELECT id, ROW_NUMBER() OVER (PARTITION BY business_key ORDER BY updated_at DESC) rn\n    FROM t) x\n  WHERE rn > 1);\n```\nOr keep `QUALIFY ROW_NUMBER() OVER (... ORDER BY updated_at DESC) = 1` (Snowflake/BigQuery). In Delta, a **MERGE** keyed on the business key keeps the latest version.",
+    "topic": "SQL",
+    "difficulty": "medium",
+    "companies": [
+      "Nike"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Nike: Merge a list of overlapping intervals.",
+    "a": "Sort by start, then walk through extending the current interval while the next start ≤ current end, otherwise emit and start fresh:\n```python\nres = []\nfor s, e in sorted(intervals):\n    if res and s <= res[-1][1]:\n        res[-1][1] = max(res[-1][1], e)\n    else:\n        res.append([s, e])\n```\nO(n log n). In SQL the same idea is a **gaps-and-islands** problem with window functions.",
+    "topic": "Coding",
+    "difficulty": "medium",
+    "companies": [
+      "Nike"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Nike: Given pipeline job statuses over time, detect more than N consecutive failures and trigger an alert.",
+    "a": "A **gaps-and-islands** problem — the difference of two row-numbers identifies each consecutive run:\n```sql\nWITH g AS (\n  SELECT *,\n    ROW_NUMBER() OVER (ORDER BY run_ts)\n    - ROW_NUMBER() OVER (PARTITION BY status ORDER BY run_ts) AS grp\n  FROM runs)\nSELECT MIN(run_ts) AS streak_start, COUNT(*) AS streak\nFROM g\nWHERE status = 'FAILED'\nGROUP BY grp\nHAVING COUNT(*) > :N;\n```\nAlert when any failure streak exceeds N.",
+    "topic": "SQL",
+    "difficulty": "hard",
+    "companies": [
+      "Nike"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Nike: Design a daily sales pipeline that handles failures, retries, and data validation.",
+    "a": "Orchestrate (Airflow/ADF): **extract** incrementally (watermark) → land **Bronze** → **validate** (schema, not-null/unique, row-count vs expected) → **transform** to Silver/Gold via idempotent **MERGE** → publish. Make every task **idempotent and retryable** (backoff), alert on failure, quarantine bad rows to a **DLQ**, and track freshness. Re-running a day must never double-count.",
+    "topic": "Orchestration",
+    "difficulty": "medium",
+    "companies": [
+      "Nike"
+    ],
+    "roles": [
+      "Data Engineer"
+    ]
   }
 ]

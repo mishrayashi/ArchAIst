@@ -60,6 +60,23 @@ clean.show()   # <-- THIS action triggers the whole plan to execute
 
 <div class="callout callout-note"><span class="cfor">🔑</span><div><strong>Why lazy evaluation matters:</strong> because Spark sees the whole plan before running, it can <em>optimise</em> it (via the Catalyst optimizer) — reorder filters, combine steps, minimise data movement. A great interview answer.</div></div>
 
+## The DAG: stages & tasks
+That "plan" is a **DAG** — a **D**irected (data flows one way) **A**cyclic (no loops) **G**raph of your transformations. Spark builds it lazily and only runs it when an **action** fires.
+
+<div class="flow flow-row">
+  <div class="flow-node"><strong>DAG</strong><span>your transformations as a graph</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Stages</strong><span>split at every shuffle boundary</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node tone-gold"><strong>Tasks</strong><span>one per partition, run in parallel</span></div>
+</div>
+
+**Narrow vs wide dependencies** decide where the stages split:
+- **Narrow** — each parent partition feeds **one** child partition, so no data moves. e.g. `map`, `filter`, `select`, `withColumn`. Stays in the same stage.
+- **Wide** — a child partition needs data from **many** parent partitions, forcing a **shuffle** across the cluster. e.g. `groupBy`, `join`, `distinct`. **Every wide dependency starts a new stage.**
+
+So the whole execution model in one line: **DAG → split into stages at each shuffle → each stage runs as parallel tasks, one per partition.**
+
 ## Common operations
 ```python
 df.select("name", "amount")
