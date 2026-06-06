@@ -7,15 +7,15 @@ minutes: 7
 tags: study, must-know
 ---
 
-Before we touch a single roadmap, let's talk about *how* to learn — because this is exactly where most people quietly lose months. Here's the reassuring truth: nobody washes out of this because they aren't smart enough. They stall because of a handful of fixable habits. Get these five right and everything that follows gets dramatically, almost unfairly, easier.
+First, *how* to learn — this is where most people lose months, and it's habits, not brains. Nail these five and the rest gets far easier.
 
 ## The five rules of learning to code
 
-1. **Build, don't just watch.** Tutorials feel productive but watching ≠ knowing. For every hour of learning, spend an hour *building* something yourself. This is the #1 rule.
-2. **Type every example by hand.** Copy-pasting teaches your clipboard, not your brain. Retype code, break it on purpose, see the errors, fix them.
-3. **Embrace errors.** Error messages are not failure — they are the computer *telling you exactly what's wrong*. Read them. Google the exact text. This single skill separates pros from quitters.
-4. **Spaced repetition.** Revisit a topic after 1 day, 3 days, 1 week. The Interview Bank here is perfect for this — drill a few questions daily.
-5. **Learn just-in-time, not just-in-case.** Don't try to learn *everything* about a tool before using it. Learn the 20% you need to build the thing, build it, and the rest sticks naturally.
+1. **Build, don't just watch.** For every hour learning, spend an hour building. The #1 rule.
+2. **Type every example by hand.** Copy-pasting teaches your clipboard, not your brain.
+3. **Befriend errors.** They tell you exactly what's wrong — read them, Google the exact text.
+4. **Spaced repetition.** Revisit after 1 day, 3 days, 1 week; drill a few interview questions daily.
+5. **Learn just-in-time.** Learn the 20% you need to build the thing — the rest sticks naturally.
 
 ## Set up your free toolkit (one evening)
 - **VS Code** — your code editor (free, code.visualstudio.com).

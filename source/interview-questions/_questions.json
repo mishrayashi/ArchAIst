@@ -449,5 +449,366 @@
       "GenAI Engineer",
       "LLM Engineer"
     ]
+  },
+  {
+    "q": "How does Spark handle data skew in joins, and what do you do if AQE is off?",
+    "a": "**Skew** = one key has far more rows, so one task does most of the work and stragglers slow the whole job.\n\n- **AQE on (Spark 3.x):** `spark.sql.adaptive.skewJoin.enabled` auto-detects oversized partitions and splits them at runtime.\n- **AQE off / manual:** **salt** the skewed key — add a random suffix (`key_0..N`) to spread it across tasks, replicate the small side per salt, then aggregate. Or **broadcast** the small side to avoid the shuffle entirely.\n\nConfirm skew in the Spark UI (one task far longer than the rest).",
+    "topic": "Spark",
+    "difficulty": "hard",
+    "companies": [],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "What's the difference between cache() and persist() in Spark?",
+    "a": "`cache()` is just `persist(MEMORY_AND_DISK)` — the default storage level for DataFrames. `persist(level)` lets you pick the **storage level**: `MEMORY_ONLY`, `MEMORY_AND_DISK`, `DISK_ONLY`, or `*_SER` (serialized — less memory, more CPU).\n\nOnly cache a dataset that's **reused** several times; it consumes memory and can evict other blocks. Call `unpersist()` when done.",
+    "topic": "Spark",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Why are pandas (vectorized) UDFs preferred over regular PySpark UDFs?",
+    "a": "A regular Python UDF serialises data **row by row** between the JVM and Python — slow, and it blocks Catalyst optimisation. **Pandas UDFs** (vectorized, Arrow-based) move data in **batches** as Arrow columns, so Python works on whole vectors at once — often 10–100× faster.\n\nBest of all: prefer **built-in Spark SQL functions** over any UDF; they run in the JVM/Photon with no Python round-trip.",
+    "topic": "Spark",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "What is the small file problem and how does Databricks solve it?",
+    "a": "Thousands of tiny files (common with streaming or frequent writes) make reads slow — huge metadata overhead and many tiny tasks.\n\nFixes:\n- **OPTIMIZE** compacts small files into larger (~1 GB) ones.\n- **Auto-Compaction** + **Optimized Writes** do it automatically on write.\n- **Liquid Clustering** (or legacy **Z-ORDER**) co-locates related data for skipping.\n\nThen **VACUUM** removes the now-unreferenced small files.",
+    "topic": "Delta Lake",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "How do you delete or update individual rows in Delta without rewriting whole files?",
+    "a": "Classic Delta uses **copy-on-write**: a `DELETE`/`UPDATE` rewrites every file containing a matched row — expensive for point changes.\n\n**Deletion vectors** (merge-on-read) instead mark deleted rows in a side file and skip them at read time — no file rewrite. Enable them on the table; a later **OPTIMIZE** physically purges them. Ideal for frequent small `DELETE`/`UPDATE`/`MERGE` (e.g. GDPR 'right to be forgotten' deletes).",
+    "topic": "Delta Lake",
+    "difficulty": "hard",
+    "companies": [],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "Z-ORDER vs Liquid Clustering — what's the difference?",
+    "a": "Both improve **data skipping** by co-locating related values so queries read fewer files.\n\n- **Z-ORDER:** you run `OPTIMIZE ... ZORDER BY (cols)` — a manual, full re-clustering each time, with fixed columns.\n- **Liquid Clustering:** declare `CLUSTER BY (cols)` once; Delta clusters **incrementally** as data lands, and you can change keys without rewriting everything.\n\nLiquid Clustering is the modern replacement for both Z-ORDER and rigid partitioning.",
+    "topic": "Delta Lake",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "What is Auto Loader and when would you use it?",
+    "a": "**Auto Loader** (`cloudFiles`) incrementally ingests **new files** as they land in cloud storage, without rescanning the whole bucket. It tracks processed files (scalable listing / file notifications), **infers and evolves the schema**, and is exactly-once via checkpointing.\n\nUse it for continuous file landing (logs, exports, drops) feeding a Bronze table — it's the standard ingestion entry point in the medallion pattern.",
+    "topic": "Delta Lake",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "What is Change Data Feed (CDF) and why is it useful?",
+    "a": "**CDF** makes a Delta table emit the **row-level changes** (inserts/updates/deletes, tagged with `_change_type`) between versions. Enable `delta.enableChangeDataFeed = true`, then read `table_changes('t', startVersion)`.\n\nUse it to propagate changes downstream incrementally — e.g. update Silver→Gold or sync to another system — without recomputing the entire table.",
+    "topic": "Delta Lake",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "How do you handle schema drift in an ADF + Databricks pipeline?",
+    "a": "**Schema drift** = source columns change over time.\n- In **ADF** mapping data flows, turn on **'Allow schema drift'** and use `byName()` / column patterns so new columns flow through.\n- In **Databricks / Auto Loader**, set `cloudFiles.schemaEvolutionMode` (e.g. `addNewColumns`) with a `schemaLocation`; unexpected data lands in `_rescued_data`.\n- Always validate the **critical** columns explicitly so drift doesn't silently break downstream contracts.",
+    "topic": "Cloud",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Explain checkpointing in Structured Streaming. What happens if the checkpoint is deleted?",
+    "a": "The **checkpoint** stores stream progress — source **offsets**, aggregation **state**, and write-ahead logs — so a restarted query resumes exactly-once from where it stopped.\n\nIf you **delete the checkpoint**, the stream loses its position: it restarts as a brand-new query, typically **reprocessing from the start** (or skipping, per `startingOffsets`), and stateful aggregations reset. Never point two queries at one checkpoint, and treat it as critical state.",
+    "topic": "Streaming",
+    "difficulty": "hard",
+    "companies": [],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "How do you implement SCD Type 2 in a streaming pipeline?",
+    "a": "Use **`foreachBatch`** on the stream and run a Delta **MERGE** per micro-batch — expire the old current row, insert the new version:\n\n```python\ndef upsert(batch_df, _):\n    (tgt.alias('t')\n       .merge(batch_df.alias('s'), 't.key = s.key AND t.is_current = true')\n       .whenMatchedUpdate(condition='t.hash <> s.hash',\n                          set={'is_current':'false','end_ts':'s.ts'})\n       .whenNotMatchedInsertAll()\n       .execute())\n\nstream.writeStream.foreachBatch(upsert).option('checkpointLocation', path).start()\n```\n\nIt's idempotent because MERGE keys on the business key + `is_current`.",
+    "topic": "Data Modeling",
+    "difficulty": "hard",
+    "companies": [],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "ADF: Copy Activity vs Mapping Data Flows — when is each cheaper?",
+    "a": "**Copy Activity** just moves data (source → sink), billed cheaply per DIU-hour — use it for plain ingestion/landing with little or no transformation.\n\n**Mapping Data Flows** run on a **Spark cluster** (billed per vCore-hour, plus cluster start-up) — only worth it for real transforms (joins, aggregations, derivations), and pushing heavy logic into **Databricks/SQL** is often cheaper still. Rule of thumb: don't spin up Data Flows just to copy.",
+    "topic": "Cloud",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "How do you manage data infrastructure as code?",
+    "a": "Define resources (storage, clusters, workspaces, jobs, networking) declaratively so they're versioned, reviewable, and reproducible:\n- **Terraform** — cloud-agnostic, huge provider ecosystem (incl. a Databricks provider).\n- **Bicep / ARM** — Azure-native.\n- **Databricks Asset Bundles** — for jobs, notebooks, and pipelines.\n\nWire it into **CI/CD** so dev/stage/prod are identical and every change goes through a PR, not the console.",
+    "topic": "Cloud",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "How do you protect PII with dynamic data masking in a lakehouse?",
+    "a": "In **Unity Catalog**, attach a **column mask** (a UDF returning masked values unless the caller is privileged) plus **row filters** for row-level security; or use **dynamic views**: `CASE WHEN is_account_group_member('admins') THEN ssn ELSE '***' END`.\n\nLayer with column-level grants and tag PII columns so policies apply consistently. Data stays unmasked at rest; masking is enforced **at query time by identity**.",
+    "topic": "Security",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "Data Engineer",
+      "AI Data Engineer"
+    ]
+  },
+  {
+    "q": "How do you model a many-to-many relationship in a star schema without a cartesian explosion?",
+    "a": "Don't join the two dimensions directly. Insert a **bridge (associative) table** holding the valid key pairs (e.g. account ↔ customer). The fact joins to the bridge, and the bridge joins to each dimension.\n\nTo stop measures double-counting across the many side, add an **allocation/weight factor** in the bridge (weights summing to 1) and multiply measures by it.",
+    "topic": "Data Modeling",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "What do broadcast joins do to worker memory, and when should you avoid them?",
+    "a": "A **broadcast join** ships the **small** table to every executor so each joins locally — no shuffle, very fast. But that table is held **in each executor's memory** (and the driver collects it first).\n\nAvoid broadcasting when the 'small' side isn't actually small (more than a few hundred MB): you risk **driver OOM** on collect and executor memory pressure. Tune `spark.sql.autoBroadcastJoinThreshold` (set `-1` to disable). AQE can also pick or cancel broadcasts at runtime.",
+    "topic": "Spark",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "What is Photon and when does it help?",
+    "a": "**Photon** is Databricks' **vectorized query engine**, rewritten in C++ — it speeds up SQL and DataFrame operations (scans, joins, aggregations) by processing columns in batches with SIMD. It's a drop-in (no code change) and shines on **SQL-heavy, large-scan** workloads.\n\nIt helps less for pure Python/UDF-bound or tiny jobs, and Photon clusters cost more per hour — so weigh the speed-up against the price.",
+    "topic": "Spark",
+    "difficulty": "easy",
+    "companies": [],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "How do you monitor pipeline failures and set up alerting?",
+    "a": "- **Job level:** Databricks Workflows / ADF have built-in retries + failure notifications (email / webhook / Teams).\n- **Metrics & logs:** ship to **Azure Monitor / Log Analytics** (or CloudWatch) and alert on failures, latency, and **data freshness**.\n- **Data quality:** assertions (Delta Live Tables **Expectations**, dbt tests) that fail loudly on bad rows.\n- **Observability:** track row counts, schema, and SLAs — page on missed freshness, not just crashes.",
+    "topic": "Orchestration",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "Data Engineer"
+    ]
+  },
+  {
+    "q": "Vector search vs keyword search vs hybrid search — when do you use each?",
+    "a": "**Vector (dense) search** matches *meaning* via embeddings + nearest-neighbour — great for paraphrases. **Keyword (sparse / BM25) search** matches *exact terms* — IDs, error codes, names, rare phrases. **Hybrid** runs both and fuses the scores, usually giving the best recall on real enterprise data.\n\nUse hybrid by default; pure vector misses exact-match queries like `SKU-12345`.",
+    "topic": "GenAI",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "AI Data Engineer",
+      "GenAI Engineer"
+    ]
+  },
+  {
+    "q": "What is reranking in RAG, and what's the trade-off?",
+    "a": "After retrieval pulls the top-k candidates fast, a **reranker** (a stronger cross-encoder) re-scores each candidate against the query and reorders them — noticeably improving precision and answer quality.\n\n**Trade-off:** extra latency and cost. The usual pattern: retrieve many cheaply (e.g. 50), then rerank down to the best few (e.g. 5) for the prompt.",
+    "topic": "GenAI",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "AI Data Engineer",
+      "GenAI Engineer"
+    ]
+  },
+  {
+    "q": "What is the lost-in-the-middle problem?",
+    "a": "LLMs attend best to the **start and end** of a long context and tend to **ignore evidence buried in the middle**. So stuffing more context can *hurt*.\n\nMitigate by retrieving fewer, higher-quality chunks (better top-k + reranking), compressing context, shrinking the window, and **placing the strongest evidence first or last**.",
+    "topic": "GenAI",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "AI Data Engineer",
+      "GenAI Engineer"
+    ]
+  },
+  {
+    "q": "When would you choose fine-tuning instead of RAG?",
+    "a": "**RAG** for fresh or domain **knowledge** — just update the index, no retraining, cheap and current. **Fine-tuning** for **behaviour, style, or format**, a narrow repeated task, or to get a smaller/cheaper specialised model.\n\nThey combine well; try better prompting + RAG *before* fine-tuning, since fine-tuning is costlier and goes stale.",
+    "topic": "GenAI",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "AI Data Engineer",
+      "GenAI Engineer"
+    ]
+  },
+  {
+    "q": "What is an AI agent, and how is it different from a workflow?",
+    "a": "An **agent** is an LLM plus **tools, memory, and control logic** that decides the next step at runtime and loops (decide → act → observe) until the goal is met. A **workflow** follows fixed, predefined steps.\n\nPrefer a **workflow** when the path is predictable — cheaper, faster, easier to debug. Use an **agent** only when the steps genuinely can't be known in advance.",
+    "topic": "GenAI",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "AI Data Engineer",
+      "GenAI Engineer"
+    ]
+  },
+  {
+    "q": "What is tool / function calling, and describe the loop.",
+    "a": "**Tool calling** lets the model request an external function via structured **JSON arguments**; your app runs it and returns the result. The model only *asks* — your code executes.\n\nThe loop: **user asks → model selects a tool + arguments → app validates & executes → result returns → model answers, or calls another tool.**",
+    "topic": "GenAI",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "AI Data Engineer",
+      "GenAI Engineer"
+    ]
+  },
+  {
+    "q": "How do you design a good tool schema for an agent?",
+    "a": "Keep tools **narrow and single-purpose**, with **clear names**, **specific descriptions**, **typed** required inputs, and **small, structured outputs**. Good schemas make the model pick the right tool with valid arguments.\n\nAvoid giant catch-all tools and vague descriptions — they cause wrong or malformed calls.",
+    "topic": "GenAI",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "AI Data Engineer",
+      "GenAI Engineer"
+    ]
+  },
+  {
+    "q": "How do you handle tool-call failures in an agent?",
+    "a": "**Validate** the model's arguments before executing; **retry** transient failures with backoff; return **clear error messages** the model can act on; **fall back** gracefully; **log traces** for every call; and require **human confirmation** for risky or irreversible actions (deletes, payments).",
+    "topic": "GenAI",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "AI Data Engineer",
+      "GenAI Engineer"
+    ]
+  },
+  {
+    "q": "Sequential vs parallel tool calling — when do you use each?",
+    "a": "Use **sequential** calls when step B depends on step A's output. Use **parallel** calls for **independent** lookups (e.g. fetch weather and stock price at once) to cut latency.\n\nMany modern models can emit several tool calls in a single turn — exploit that for independent work.",
+    "topic": "GenAI",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "AI Data Engineer",
+      "GenAI Engineer"
+    ]
+  },
+  {
+    "q": "What is memory in agents?",
+    "a": "**Memory** is useful state carried across turns or tasks: conversation **summaries**, **user preferences**, **task progress**, retrieved **facts**, or persistent **external records** (a DB / vector store).\n\nShort-term memory fits in the context window; long-term memory is stored and retrieved on demand so the agent doesn't start from scratch each turn.",
+    "topic": "GenAI",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "AI Data Engineer",
+      "GenAI Engineer"
+    ]
+  },
+  {
+    "q": "What is a multi-agent system, and when should you avoid one?",
+    "a": "Multiple **specialised agents** (e.g. researcher, planner, coder) collaborate under a **supervisor**, graph, or message protocol, each owning part of a task.\n\nUse it when roles are genuinely separable. **Avoid it when one agent is simpler** — more agents means more cost, latency, and failure modes.",
+    "topic": "GenAI",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "AI Data Engineer",
+      "GenAI Engineer"
+    ]
+  },
+  {
+    "q": "What is MCP (Model Context Protocol)?",
+    "a": "**Model Context Protocol** is an open standard for connecting AI apps to external **tools and data sources** in a uniform way — a universal adapter, so you don't hand-wire every integration. Your app speaks MCP; each tool or data source exposes an MCP server. It's becoming the common way agents access the outside world.",
+    "topic": "GenAI",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "AI Data Engineer",
+      "GenAI Engineer"
+    ]
+  },
+  {
+    "q": "How do you evaluate an LLM app and an agent?",
+    "a": "Define **task-specific success criteria** and a labelled dataset; measure outputs **automatically and with human review**; gate releases with **regression tests**.\n\nFor an **agent**, evaluate the whole **trajectory** — correct tool choice, argument accuracy, number of steps, cost, latency, and safe behaviour — not just the final answer.",
+    "topic": "GenAI",
+    "difficulty": "hard",
+    "companies": [],
+    "roles": [
+      "AI Data Engineer",
+      "GenAI Engineer"
+    ]
+  },
+  {
+    "q": "What is prompt injection, and how do you defend against it?",
+    "a": "**Prompt injection** is malicious/untrusted text (in a web page, document, or user message) that tries to override your instructions, leak the system prompt, or misuse tools.\n\nDefence: **treat all external text as untrusted** — validate and isolate it, separate instructions from data, constrain tool permissions, and never let retrieved content silently change behaviour.",
+    "topic": "GenAI",
+    "difficulty": "hard",
+    "companies": [],
+    "roles": [
+      "AI Data Engineer",
+      "GenAI Engineer"
+    ]
+  },
+  {
+    "q": "What is excessive agency in an LLM system?",
+    "a": "**Excessive agency** = giving the model too much functionality, permission, or autonomy, so a mistake or attack can take harmful actions (delete data, send emails, spend money).\n\nFix with **least privilege**: scope tools tightly, require approval for risky actions, and constrain what the agent can reach. Least privilege, always.",
+    "topic": "GenAI",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "AI Data Engineer",
+      "GenAI Engineer"
+    ]
+  },
+  {
+    "q": "What is tracing / observability for agents, and why does it matter?",
+    "a": "**Tracing** records the full run — prompts, model calls, **tool calls**, inputs/outputs, latency, tokens, cost, and decisions — so you can debug, replay, and explain failures.\n\nBecause agents are non-deterministic and multi-step, you can't fix what you can't see. Tools like **LangSmith** specialise in this.",
+    "topic": "GenAI",
+    "difficulty": "medium",
+    "companies": [],
+    "roles": [
+      "AI Data Engineer",
+      "GenAI Engineer"
+    ]
   }
 ]

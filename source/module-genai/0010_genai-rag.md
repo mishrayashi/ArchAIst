@@ -73,6 +73,7 @@ Things that make RAG good (interview-worthy):
 - **Metadata filtering:** store source/date/permissions with chunks; filter before/after retrieval.
 - **Re-ranking:** retrieve many, then re-rank for the best few.
 - **Hybrid search:** combine keyword (BM25) + vector search.
+- **Context order ("lost in the middle"):** models ignore evidence buried in the middle of a long prompt — put the strongest chunks first or last, and prefer fewer, better chunks over more.
 - **Citations:** return sources so users can verify (and to fight hallucination).
 - **Evals:** measure retrieval quality and answer faithfulness.
 
