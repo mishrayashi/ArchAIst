@@ -7,7 +7,7 @@ minutes: 7
 tags: roadmap, data scientist
 ---
 
-The Data Scientist builds models to predict and find deep insight — heavier on statistics and experimentation. This academy is engineering-focused, but several core skills overlap, and we'll be honest about what to learn elsewhere.
+A Data Scientist builds models to predict the future and uncover insight that's hiding in plain sight — leaning more on statistics and experimentation than pure engineering. This academy is engineering-focused, so we'll be straight with you: a few pieces you'll need to pick up elsewhere, and we'll point you to them honestly rather than pretend we cover everything. The good part? More overlaps with what's here than you'd expect.
 
 ## Phase 1 — Maths & statistics foundation
 Probability, distributions, hypothesis testing, regression. *(Core to DS; study via a stats course.)*

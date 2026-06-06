@@ -29,15 +29,21 @@ The **Data Engineer (DE)** builds and maintains the systems that collect, store,
 | Foundations | Linux basics, Git, **HLD/LLD** (system design) |
 
 ## Why it's the best entry point
-- **Learnable from zero** — mostly logical, code-and-SQL skills, less heavy maths than data science.
-- **Massive, durable demand** — every company has data; few can engineer it well.
-- **Clear ladder** — Junior → DE → Senior → Lead/Architect, or pivot into AI roles.
-- **Foundation for AI** — every GenAI/LLM system needs a data engineer behind it.
+
+<div class="feat-grid">
+  <div class="feat"><span class="feat-ic"><i data-ic="terminal"></i></span><div><strong>Learnable from zero</strong><p>Mostly logical code-and-SQL skills, less heavy maths than data science.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="chart"></i></span><div><strong>Massive, durable demand</strong><p>Every company has data; few can engineer it well.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="route"></i></span><div><strong>Clear ladder</strong><p>Junior to DE to Senior to Lead/Architect, or pivot into AI roles.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="sparkles"></i></span><div><strong>Foundation for AI</strong><p>Every GenAI/LLM system needs a data engineer behind it.</p></div></div>
+</div>
 
 ## Rough salary signal
 Among the highest-paid non-managerial tech roles. In India, mid-level DEs often out-earn equivalent web developers; in the US, senior DEs commonly reach the top tech pay bands. *(Numbers vary wildly by country, company, and year — treat as direction, not promise.)*
 
 ## How to get in (summary — full plan in Roadmaps)
+
+<nav class="pathway pathway-flow"><span class="pw-step"><span class="pw-n">1</span>SQL + Python</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">2</span>Cloud + warehouse + Spark + Airflow</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">3</span>Portfolio projects</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">4</span>Data modelling + system design</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">5</span>Interview Bank</span></nav>
+
 1. Master **SQL** + **Python**.
 2. Learn **one cloud** + a **warehouse** + **Spark** + **Airflow**.
 3. Build **2–3 portfolio projects** (an end-to-end pipeline is gold).

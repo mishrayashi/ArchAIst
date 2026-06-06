@@ -48,7 +48,7 @@ Click each type to see how the day-to-day data work changes:
 
 **Product data engineer (say, at a streaming app):** You own the pipeline that turns raw "play / pause / skip" events into the tables the recommendation model trains on. You care about data freshness SLAs, schema contracts with other teams, and the cost of your daily Spark jobs. The domain (streaming) barely changes year to year, so you go *deep* — you become the person who knows that data cold.
 
-**Service data engineer (say, at Infosys on a retail client):** This quarter you're building a sales-analytics warehouse for a retailer; next year it might be a healthcare data lake. You ramp on a new domain and stack quickly, follow the client's standards, and deliver against a statement of work. You meet *many* architectures fast — unbeatable for early-career breadth.
+**Service data engineer (say, at Infosys on a retail client):** This quarter you build a sales-analytics warehouse; next year it might be a healthcare data lake. You ramp on a new domain and stack quickly, follow the client's standards, and deliver against a statement of work — meeting *many* architectures fast. Unbeatable for early-career breadth.
 
 **FinTech data engineer (say, at a payments company):** Every pipeline you build must reconcile to the last paisa, keep an audit trail, and never lose a transaction. You think about idempotency, exactly-once processing, fraud signals, and regulatory reporting. The *domain* sets the bar — "roughly right" is never acceptable with money.
 
@@ -60,10 +60,12 @@ The deciding technical variable is often <strong>data criticality</strong>. In m
 
 There's no single right answer — match it to your goal:
 
-- **Brand-new, want to learn fast & get hired** → service-based is a superb on-ramp: structured training, many projects, lower entry bar.
-- **Want deep ownership & top pay, ready to grind interviews** → product-based.
-- **Love a field (money, health, games)** → pick that domain; decide product vs service by how you like to work.
-- **Unsure** → many careers go *service → product*: build breadth and a track record, then specialise.
+<div class="feat-grid">
+  <div class="feat"><span class="feat-ic"><i data-ic="spark"></i></span><div><strong>Learn fast & get hired</strong><p>Service-based is a superb on-ramp: structured training, many projects, lower entry bar.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="target"></i></span><div><strong>Deep ownership & top pay</strong><p>Product-based — if you're ready to grind the interviews.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="compass"></i></span><div><strong>Love a field (money, health, games)</strong><p>Pick that domain; decide product vs service by how you like to work.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="route"></i></span><div><strong>Unsure</strong><p>Many careers go service → product: build breadth and a track record, then specialise.</p></div></div>
+</div>
 
 <div class="callout callout-tip"><span class="cfor"></span><div><span class="ctitle">Interview gold:</span> When asked "why us?", name the company's <em>type</em> and <em>domain</em> back to them. "I want product depth in streaming data" or "I'm drawn to FinTech because correctness and audit trails make the data work rigorous" lands far better than "you're a great company."</div></div>
 

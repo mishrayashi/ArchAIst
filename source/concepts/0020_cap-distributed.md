@@ -12,10 +12,13 @@ Once your data lives across *many machines* (which it always does at scale), you
 <div class="widget-mount" data-widget="cap"></div>
 
 ## The three letters
-In a **distributed** system you want all three, but you can't fully have all three at once:
-- **C — Consistency:** every read sees the most recent write (everyone sees the same data). *(Note: different from the C in ACID.)*
-- **A — Availability:** every request gets a (non-error) response, even if some nodes are down.
-- **P — Partition tolerance:** the system keeps working even when the network between nodes breaks (a "partition").
+In a **distributed** system you want all three, but you can't fully have all three at once.
+
+<div class="feat-grid">
+  <div class="feat"><span class="feat-ic"><i data-ic="check"></i></span><div><strong>C — Consistency</strong><p>Every read sees the most recent write, so everyone sees the same data. (Different from the C in ACID.)</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="zap"></i></span><div><strong>A — Availability</strong><p>Every request gets a non-error response, even if some nodes are down.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="network"></i></span><div><strong>P — Partition tolerance</strong><p>The system keeps working even when the network between nodes breaks (a "partition").</p></div></div>
+</div>
 
 ## The theorem
 **When a network partition happens (P), you must choose between Consistency (C) and Availability (A).** Since networks *will* fail in any real distributed system, P is non-negotiable — so the real choice is **CP vs AP**.
@@ -25,8 +28,11 @@ Two shop branches that normally sync stock. The phone line between them dies (pa
 </div>
 
 ## CP vs AP in practice
-- **CP (Consistency + Partition tolerance):** refuse/withhold answers rather than serve stale data. Good for banking, inventory, anything where wrong data is dangerous. Examples: HBase, MongoDB (in certain configs), traditional RDBMS clusters.
-- **AP (Availability + Partition tolerance):** always answer, accept temporary staleness (eventual consistency). Good for social feeds, shopping carts, where being up matters more than perfect freshness. Examples: Cassandra, DynamoDB, CouchDB.
+
+| Choice | During a partition | Good for | Examples |
+| --- | --- | --- | --- |
+| **CP** (Consistency + Partition tolerance) | Refuse/withhold answers rather than serve stale data | Banking, inventory — anywhere wrong data is dangerous | HBase, MongoDB (some configs), traditional RDBMS clusters |
+| **AP** (Availability + Partition tolerance) | Always answer, accept temporary staleness (eventual consistency) | Social feeds, shopping carts — being up matters more than perfect freshness | Cassandra, DynamoDB, CouchDB |
 
 ## Beyond CAP: PACELC (bonus)
 CAP only talks about behaviour *during* a partition. **PACELC** extends it: *if Partition, choose A or C; **E**lse (normal operation), choose between **L**atency and **C**onsistency.* Even with no failures, you often trade a little consistency for lower latency (e.g. reading from a nearby replica that's slightly behind).

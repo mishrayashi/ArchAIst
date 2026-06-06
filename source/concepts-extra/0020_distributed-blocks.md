@@ -37,17 +37,25 @@ Tie-in: [CAP & PACELC](#/page/cap-distributed) explain *why* you trade these.
 
 ## Idempotency & delivery guarantees
 - **Idempotent** — running twice = same result as once (vital for retries). See [ETL](#/page/etl-concepts).
-- **At-most-once / at-least-once / exactly-once** — delivery semantics. At-least-once + idempotent processing ≈ exactly-once in practice.
+- **Delivery semantics** — how hard the system tries to deliver each message:
+
+<div class="flow flow-row">
+  <div class="flow-node tone-bronze"><strong>At-most-once</strong><span>may drop, never duplicates</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node tone-silver"><strong>At-least-once</strong><span>never drops, may duplicate</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node tone-gold"><strong>Exactly-once</strong><span>at-least-once + idempotent</span></div>
+</div>
 
 ## Transactions across systems
 - **Two-phase commit (2PC)** — a coordinator asks all participants to "prepare," then "commit." Strong but blocking and fragile at scale.
 - **Saga** — a long transaction split into steps, each with a **compensating action** to undo on failure. The scalable alternative to 2PC in microservices.
 
 ## Backpressure & flow control
-When a consumer can't keep up with a producer, **backpressure** signals "slow down" so you don't overflow memory/queues. A core streaming concern.
+When a consumer can't keep up with a producer, **backpressure** signals "slow down" so you don't overflow memory or queues — a core streaming concern.
 
 ## Dead-letter queue (DLQ)
-A side queue where messages that repeatedly fail processing are parked for later inspection — so one poison message doesn't block the whole stream.
+A side queue where repeatedly-failing messages are parked for later inspection, so one poison message doesn't block the whole stream.
 
 ## Fan-in / Fan-out
 - **Fan-out** — one event delivered to many consumers/partitions.

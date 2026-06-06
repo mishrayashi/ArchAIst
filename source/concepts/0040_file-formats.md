@@ -7,7 +7,7 @@ minutes: 7
 tags: file formats, parquet
 ---
 
-A small topic with outsized interview value: **why do data engineers prefer Parquet over CSV?** Knowing file formats shows you understand storage and performance.
+A small topic with outsized interview value: **why do data engineers prefer Parquet over CSV?** Knowing file formats signals that you understand storage and performance.
 
 ## Row vs Columnar storage
 - **Row-based** stores all of row 1, then all of row 2… Great for writing/reading whole records (operational apps).
@@ -28,11 +28,14 @@ Columnar: [1,2][Ravi,Sara][Mumbai,Delhi]     ← read just 'city' fast, compress
 | **Avro** | Row, binary | Streaming/Kafka, schema evolution | Row-based; great for write-heavy + evolving schemas |
 
 ## Why Parquet wins for analytics
-1. **Columnar** → reads only needed columns (less I/O).
-2. **Compression** → columns of similar values compress extremely well (smaller = cheaper, faster).
-3. **Typed + schema embedded** → no guessing types like CSV.
-4. **Predicate/column pushdown** → engines skip irrelevant data using built-in stats (min/max per chunk).
-5. **Splittable** → multiple workers read one file in parallel.
+
+<div class="feat-grid">
+  <div class="feat"><span class="feat-ic"><i data-ic="layers"></i></span><div><strong>Columnar</strong><p>Reads only the columns you need, so less I/O.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="zap"></i></span><div><strong>Compression</strong><p>Columns of similar values compress extremely well: smaller, cheaper, faster.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="check"></i></span><div><strong>Typed + schema embedded</strong><p>No guessing types like CSV.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="target"></i></span><div><strong>Predicate/column pushdown</strong><p>Engines skip irrelevant data using built-in stats (min/max per chunk).</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="network"></i></span><div><strong>Splittable</strong><p>Multiple workers read one file in parallel.</p></div></div>
+</div>
 
 <div class="callout callout-note"><span class="cfor">🔑</span><div><strong>Rule of thumb:</strong> CSV/JSON at the <em>edges</em> (ingesting from sources, sharing with humans); <strong>Parquet</strong> everywhere <em>inside</em> your lake/warehouse for analytics; <strong>Avro</strong> for streaming/Kafka where you write constantly and schemas change. Table formats <strong>Delta/Iceberg/Hudi</strong> sit on top of Parquet to add ACID transactions.</div></div>
 

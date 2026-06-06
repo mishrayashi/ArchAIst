@@ -10,7 +10,17 @@ tags: spark, pyspark, big data, must-know
 When data is too big for one machine (or pandas runs out of memory), you use **Apache Spark** — the standard engine for processing huge datasets across many machines at once. **PySpark** is its Python interface. This is a top interview topic for data engineers.
 
 ## The core idea: distributed processing
-Spark splits your data into **partitions** and processes them **in parallel** across a **cluster** (many machines). One *driver* coordinates; many *executors* do the work. You write code as if on one machine; Spark handles the distribution.
+Spark splits your data into **partitions** and processes them **in parallel** across a **cluster**. One *driver* coordinates; many *executors* do the work. You write code as if on one machine; Spark handles the distribution.
+
+<div class="flow flow-row">
+  <div class="flow-node"><strong>Driver</strong><span>plans &amp; coordinates</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Partitions</strong><span>data split into chunks</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Executors</strong><span>process in parallel</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Result</strong><span>combined back</span></div>
+</div>
 
 <div class="eli"><span class="eli-tag">Explain like I'm new</span>
 Counting votes in a country: one person counting all ballots takes forever. Instead, split ballots across 1,000 counters (partitions on executors), each counts their pile, then you sum the totals (a "shuffle"/reduce). Spark is the system that organises those 1,000 counters.
@@ -68,12 +78,15 @@ orders.join(customers, orders.cust_id == customers.id, "inner")
 Operations like `groupBy`, `join`, and `distinct` need to move data between machines so matching keys end up together. This movement is a **shuffle** — it's expensive (network + disk). Minimising shuffles is the heart of Spark tuning.
 
 Key performance levers:
-- **Partitioning:** good partition sizes (~128MB) keep all executors busy; too few = idle machines, too many = overhead.
-- **Broadcast join:** if one table is small, *broadcast* it to every executor to avoid a big shuffle: `orders.join(F.broadcast(small_dim), "key")`.
-- **Avoid `collect()` on big data** — it pulls everything to the driver and can crash it.
-- **Filter early, select only needed columns** — less data shuffled.
-- **Watch for data skew** — if one key has 90% of rows, one executor does all the work while others idle.
-- **Cache** (`df.cache()`) a DataFrame you reuse many times.
+
+<div class="feat-grid">
+  <div class="feat"><span class="feat-ic"><i data-ic="grid"></i></span><div><strong>Partitioning</strong><p>~128MB partitions keep executors busy; too few idle machines, too many overhead.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="zap"></i></span><div><strong>Broadcast join</strong><p>Send a small table to every executor to skip a big shuffle: <code>orders.join(F.broadcast(small_dim), "key")</code>.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="database"></i></span><div><strong>Avoid collect()</strong><p>On big data it pulls everything to the driver and can crash it.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="target"></i></span><div><strong>Filter &amp; select early</strong><p>Fewer rows and columns means less data shuffled.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="chart"></i></span><div><strong>Watch data skew</strong><p>If one key holds 90% of rows, one executor does all the work while others idle.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="refresh"></i></span><div><strong>Cache reuse</strong><p><code>df.cache()</code> a DataFrame you read many times.</p></div></div>
+</div>
 
 ## RDD vs DataFrame
 - **RDD** = the old, low-level API (raw distributed objects). Flexible but no automatic optimisation.

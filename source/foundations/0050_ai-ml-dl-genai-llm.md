@@ -11,28 +11,17 @@ These five words get mixed up constantly — even by professionals. Let's fix th
 
 <div class="widget-mount" data-widget="nesting"></div>
 
-```text
-┌─────────────────────────────────────────────┐
-│ Artificial Intelligence (AI)                 │
-│  any machine doing "smart" tasks             │
-│  ┌─────────────────────────────────────────┐ │
-│  │ Machine Learning (ML)                    │ │
-│  │  machines that LEARN from data           │ │
-│  │  ┌─────────────────────────────────────┐ │ │
-│  │  │ Deep Learning (DL)                   │ │ │
-│  │  │  ML using neural networks            │ │ │
-│  │  │  ┌─────────────────────────────────┐ │ │ │
-│  │  │  │ Generative AI (GenAI)            │ │ │ │
-│  │  │  │  DL that CREATES new content     │ │ │ │
-│  │  │  │   ┌───────────────────────────┐  │ │ │ │
-│  │  │  │   │ LLMs (e.g. GPT, Claude)   │  │ │ │ │
-│  │  │  │   │  GenAI for text/language  │  │ │ │ │
-│  │  │  │   └───────────────────────────┘  │ │ │ │
-│  │  │  └─────────────────────────────────┘ │ │ │
-│  │  └─────────────────────────────────────┘ │ │
-│  └─────────────────────────────────────────┘ │
-└─────────────────────────────────────────────┘
-```
+<div class="nest">
+  <div class="nest-l nest-1"><span class="nest-t">Artificial Intelligence</span><em>any machine doing "smart" tasks</em>
+    <div class="nest-l nest-2"><span class="nest-t">Machine Learning</span><em>machines that learn from data</em>
+      <div class="nest-l nest-3"><span class="nest-t">Deep Learning</span><em>ML using neural networks</em>
+        <div class="nest-l nest-4"><span class="nest-t">Generative AI</span><em>DL that creates new content</em>
+          <div class="nest-l nest-5"><span class="nest-t">LLMs</span><em>GenAI for text &amp; language — GPT, Claude</em></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 ## 1. Artificial Intelligence (AI) — the broadest idea
 Any technique that makes a machine do something we'd call "intelligent." This includes simple rule-based systems (a chess program from 1980, a thermostat) all the way to ChatGPT. **AI is the umbrella term.**

@@ -164,10 +164,11 @@
 
     view.innerHTML =
       '<div class="hero">' +
+        '<p class="hero-kicker"><span class="dot"></span>DATA · AI · GENAI ENGINEERING</p>' +
         '<h1>From <span class="grad">zero</span> to<br>Data &amp; GenAI Engineer</h1>' +
-        '<p class="lead">No background needed. If you\'re in school or switching careers, start here. We explain every word, show the code, build your roadmap, and prep you for real interviews — with interactive, hands-on lessons.</p>' +
+        '<p class="lead">No background needed. We explain every term, show the code, and prep you for real interviews — all hands-on.</p>' +
         '<div class="hero-cta">' +
-          '<a class="btn btn-primary" href="#/page/welcome">Start from the beginning ' + ic("arrowRight", "ic-sm") + "</a>" +
+          '<a class="btn btn-primary" href="#/page/welcome">Let\'s Dive in ' + ic("arrowRight", "ic-sm") + "</a>" +
           '<a class="btn btn-ghost" href="#/page/roles-overview">' + ic("compass", "ic-sm") + " Find my role</a>" +
         "</div>" +
         '<div class="stat-row">' +
@@ -177,12 +178,23 @@
           '<div class="stat"><div class="num">' + totalTerms + '</div><div class="lbl">Glossary terms</div></div>' +
         "</div>" +
       "</div>" +
-      '<section class="map-section">' +
+      // compact orientation strip — replaces the old wall-of-text callout
+      '<nav class="pathway" aria-label="Suggested order">' +
+        '<span class="pw-step"><span class="pw-n">1</span>Foundations</span>' +
+        '<span class="pw-arrow">' + ic("arrowRight", "ic-sm") + "</span>" +
+        '<span class="pw-step"><span class="pw-n">2</span>Find your role</span>' +
+        '<span class="pw-arrow">' + ic("arrowRight", "ic-sm") + "</span>" +
+        '<span class="pw-step"><span class="pw-n">3</span>Roadmap</span>' +
+        '<span class="pw-arrow">' + ic("arrowRight", "ic-sm") + "</span>" +
+        '<span class="pw-step"><span class="pw-n">4</span>Modules</span>' +
+        '<span class="pw-arrow">' + ic("arrowRight", "ic-sm") + "</span>" +
+        '<span class="pw-step"><span class="pw-n">5</span>Interview prep</span>' +
+      "</nav>" +
+      '<section class="map-section map-section-lead">' +
         '<div class="map-head"><h2>' + ic("network", "ic-sm") + ' Explore the map</h2>' +
-        '<p>Every topic and lesson as a living mind map. Click a topic to branch into its lessons, then click a lesson to open it.</p></div>' +
+        '<p>The whole academy as one living map. Drag to roam, scroll to zoom, click a topic to branch into its lessons — then open any lesson.</p></div>' +
         '<div id="mindmapHost" class="mindmap-host"></div>' +
       "</section>" +
-      '<div class="callout callout-note"><span class="cfor"></span><div><span class="ctitle">New here? Follow this order:</span> Foundations → Find My Role → pick a Roadmap → work through the Modules → drill the Interview Bank. Progress saves automatically in this browser.</div></div>' +
       "<h2>Explore the academy</h2>" +
       '<div class="card-grid">' + cards + "</div>" +
       "<h2>Interview &amp; reference</h2>" +
@@ -226,6 +238,59 @@
       items.map((i) => '<a class="toc-link" data-id="' + i.id + '">' + i.t + "</a>").join("") + "</div></nav>";
   }
 
+  // Roadmap / career-path pages render as a visual phase-timeline instead of
+  // a flat wall of headings + bullets. Each "## ..." block becomes a milestone
+  // card on a connected timeline; "→ *X module*" references become chips.
+  function roadmapHtml(body) {
+    const lines = body.split("\n");
+    const intro = [];
+    const phases = [];
+    let cur = null;
+    lines.forEach((ln) => {
+      const m = ln.match(/^##\s+(.+?)\s*$/);
+      if (m) { cur = { heading: m[1].trim(), body: [] }; phases.push(cur); }
+      else if (cur) cur.body.push(ln);
+      else intro.push(ln);
+    });
+    if (!phases.length) return mdToHtml(body);
+
+    const introTxt = intro.join("\n").trim();
+    const introHtml = introTxt ? '<div class="rm-intro">' + mdToHtml(introTxt) + "</div>" : "";
+
+    const toChips = (h) => h
+      .replace(/→\s*<em>(.*?)<\/em>/g, '<span class="rm-chip">' + ic("arrowRight", "ic-sm") + "$1</span>")
+      .replace(/→\s*<strong>(.*?)<\/strong>/g, '<span class="rm-chip">' + ic("arrowRight", "ic-sm") + "$1</span>");
+
+    const cards = phases.map((ph, i) => {
+      let title = ph.heading, badge = "", kicker = "Step " + (i + 1);
+      const pm = title.match(/^(.*?)\s*\(([^)]*)\)\s*$/);
+      if (pm) { title = pm[1].trim(); badge = pm[2].trim(); }
+      const fm = title.match(/^Phase\s+\d+\s*[—–-]\s*(.+)$/i);
+      if (fm) { kicker = "Phase " + (i + 1); title = fm[1].trim(); }
+      const bodyHtml = toChips(mdToHtml(ph.body.join("\n")));
+      return '<div class="rm-phase">' +
+        '<div class="rm-node">' + (i + 1) + "</div>" +
+        '<div class="rm-card">' +
+          '<div class="rm-phase-head">' +
+            '<span class="rm-kicker">' + kicker + "</span>" +
+            "<h2>" + title + "</h2>" +
+            (badge ? '<span class="rm-weeks">' + badge + "</span>" : "") +
+          "</div>" +
+          '<div class="rm-phase-body">' + bodyHtml + "</div>" +
+        "</div></div>";
+    }).join("");
+
+    return introHtml + '<div class="rm-timeline">' + cards + "</div>";
+  }
+
+  // Let content reference the site's SVG icon set via a placeholder, e.g.
+  // <i data-ic="book"></i> or <i data-ic="arrowRight" class="ic-sm"></i>.
+  // Keeps visual cards/diagrams in markdown clean instead of inline SVG.
+  function expandIcons(html) {
+    return html.replace(/<i\s+data-ic="([\w-]+)"(?:\s+class="([^"]*)")?\s*><\/i>/g,
+      function (m, name, cls) { return ic(name, cls || ""); });
+  }
+
   function renderPage(id) {
     const p = LP.getPage(id);
     if (!p) return renderNotFound();
@@ -235,7 +300,8 @@
     const prev = ordered[gidx - 1];
     const next = ordered[gidx + 1];
     const isDone = !!progress[id];
-    const toc = buildToc(p.body);
+    const isRoadmap = (p.section === "roadmaps" || p.section === "role-tracks");
+    const toc = isRoadmap ? "" : buildToc(p.body);
 
     view.innerHTML =
       '<div class="page-head"><div class="page-head-main">' +
@@ -249,7 +315,7 @@
         ringHtml(isDone) +
       "</div>" +
       toc +
-      '<div class="page-body">' + mdToHtml(p.body) + "</div>" +
+      '<div class="page-body">' + expandIcons(isRoadmap ? roadmapHtml(p.body) : mdToHtml(p.body)) + "</div>" +
       '<div class="complete-bar">' +
         '<div class="complete-state' + (isDone ? " is-done" : "") + '" id="completeState">' +
           (isDone ? ic("check", "ic-sm") + " Completed" : "Reading… auto-completes when you reach the end") +

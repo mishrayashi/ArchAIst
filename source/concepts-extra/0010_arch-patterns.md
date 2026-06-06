@@ -18,12 +18,25 @@ Run **two paths in parallel**: a **batch layer** (accurate, slow, reprocesses ev
 *Say it when:* you can express batch as "replay the stream."
 
 ## Medallion architecture (Bronze / Silver / Gold)
-Layered refinement in a lakehouse: **Bronze** = raw as-ingested, **Silver** = cleaned/conformed, **Gold** = business-ready aggregates. Each layer rebuilds from the one before. The default modern data-engineering pattern.
+Layered refinement in a lakehouse, where each layer rebuilds from the one before. The default modern data-engineering pattern.
+
+<div class="flow flow-row">
+  <div class="flow-node tone-bronze"><strong>Bronze</strong><span>raw as-ingested</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node tone-silver"><strong>Silver</strong><span>cleaned / conformed</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node tone-gold"><strong>Gold</strong><span>business-ready aggregates</span></div>
+</div>
 
 ## Data warehouse vs Data lake vs Lakehouse
-- **Warehouse** — structured, governed, fast SQL (Snowflake/BigQuery/Redshift).
-- **Lake** — cheap object storage holding any raw files; flexible, risk of a "data swamp."
-- **Lakehouse** — a table layer (Delta/Iceberg/Hudi) over lake files adding ACID + reliability. Cheap *and* trustworthy. *(Full lesson: [Warehouses & lakehouse](#/page/warehouse-basics).)*
+
+| Pattern | What it is | Trade-off |
+| --- | --- | --- |
+| **Warehouse** | Structured, governed, fast SQL (Snowflake/BigQuery/Redshift) | Trustworthy, but pricier and rigid |
+| **Lake** | Cheap object storage holding any raw files | Flexible, but risks a "data swamp" |
+| **Lakehouse** | A table layer (Delta/Iceberg/Hudi) over lake files adding ACID + reliability | Cheap *and* trustworthy |
+
+*(Full lesson: [Warehouses & lakehouse](#/page/warehouse-basics).)*
 
 ## Data Mesh
 An **organisational** pattern: decentralise data ownership to **domain teams**, each publishing their data as a well-documented **data product**, governed by federated standards. Solves the "central data team is a bottleneck" problem at large companies.

@@ -39,15 +39,17 @@ The product/service split also predicts your <strong>engineering maturity exposu
 
 ## A quick map of domains you'll encounter
 
-- **FinTech** — payments, lending, trading, banking tech (Razorpay, Stripe, Zerodha).
-- **E-commerce / Retail** — catalogs, recommendations, logistics (Flipkart, Amazon, Walmart).
-- **HealthTech** — patient data, diagnostics, claims (privacy-critical).
-- **EdTech** — learning platforms, content, assessment.
-- **AdTech / MarTech** — huge real-time event data, targeting.
-- **Media / Streaming** — recommendations at scale (Netflix, Spotify).
-- **Enterprise SaaS** — software other businesses run on (Salesforce, SAP).
-- **GovTech / Consulting** — large, often service-led, compliance-heavy.
+<div class="feat-grid">
+  <div class="feat"><span class="feat-ic"><i data-ic="chart"></i></span><div><strong>FinTech</strong><p>payments, lending, trading, banking tech (Razorpay, Stripe, Zerodha).</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="cube"></i></span><div><strong>E-commerce / Retail</strong><p>catalogs, recommendations, logistics (Flipkart, Amazon, Walmart).</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="zap"></i></span><div><strong>HealthTech</strong><p>patient data, diagnostics, claims — privacy-critical.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="book"></i></span><div><strong>EdTech</strong><p>learning platforms, content, assessment.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="target"></i></span><div><strong>AdTech / MarTech</strong><p>huge real-time event data, targeting.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="play"></i></span><div><strong>Media / Streaming</strong><p>recommendations at scale (Netflix, Spotify).</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="building"></i></span><div><strong>Enterprise SaaS</strong><p>software other businesses run on (Salesforce, SAP).</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="layers"></i></span><div><strong>GovTech / Consulting</strong><p>large, often service-led, compliance-heavy.</p></div></div>
+</div>
 
-Each domain is a *flavour* layered on top of the product/service way of working.
+Each domain is a *flavour* layered on top of the product vs service way of working.
 
 > **Key takeaway:** Describe any company with **two** dimensions — *how it operates* (product vs service) and *what domain it serves* (FinTech, retail, health…). They overlap; they're not rivals. The next lessons compare them in depth and help you choose.

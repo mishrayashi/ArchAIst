@@ -15,11 +15,13 @@ A recipe is a program: "Heat oil. Add onions. Wait 5 minutes. Add tomatoes." The
 
 ## Why Python is the language for data and AI
 
-There are hundreds of programming languages. For data and AI, the world has overwhelmingly chosen **Python** because:
+There are hundreds of programming languages. For data and AI, the world has overwhelmingly chosen **Python**:
 
-- It reads almost like English — gentle for beginners.
-- It has free, ready-made toolkits ("libraries") for *everything*: data (`pandas`), big data (`PySpark`), AI (`PyTorch`, `transformers`), and more.
-- It's the default language of every AI company on earth.
+<div class="feat-grid">
+  <div class="feat"><span class="feat-ic"><i data-ic="book"></i></span><div><strong>Reads like English</strong><p>Gentle syntax that's friendly for beginners.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="layers"></i></span><div><strong>Toolkits for everything</strong><p>Free libraries for data (<code>pandas</code>), big data (<code>PySpark</code>), and AI (<code>PyTorch</code>, <code>transformers</code>).</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="sparkles"></i></span><div><strong>The AI default</strong><p>The standard language of every AI company on earth.</p></div></div>
+</div>
 
 Here is a complete, working Python program. Read it:
 
@@ -44,7 +46,19 @@ Average temperature: 31.142857142857142
 Hot days: [32, 35, 33]
 ```
 
-You just read a real program that loads data, does maths, makes a decision (`if t > 31`), and reports a result. That is the *entire* essence of programming.
+You just read a real program. It follows the same shape almost every program does:
+
+<div class="flow flow-row">
+  <div class="flow-node"><strong>Load data</strong><span>the temperatures list</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Do maths</strong><span>sum, average</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Decide</strong><span>if t &gt; 31</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Report</strong><span>print results</span></div>
+</div>
+
+That is the *entire* essence of programming.
 
 ## The building blocks (you'll meet these everywhere)
 

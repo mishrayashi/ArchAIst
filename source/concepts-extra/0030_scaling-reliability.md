@@ -20,7 +20,7 @@ When an interviewer says "how would this scale?" or "how do you make it reliable
 - **Autoscaling** — add/remove capacity automatically with load (and shut idle compute to save cost).
 
 ## Load balancing
-Spreading requests across many servers (round-robin, least-connections, hashing). Keeps any one node from melting; enables horizontal scale.
+Spread requests across many servers (round-robin, least-connections, hashing). Keeps any one node from melting and enables horizontal scale.
 
 ## Caching
 Storing hot results closer/faster (Redis, CDN, materialised views) to cut latency and load. Concerns: **cache invalidation** (the hard part), **TTL** (expiry), **cache hit ratio**, and **stampede** (many misses at once).
@@ -45,11 +45,14 @@ Senior design is judged on these as much as features:
 - **Cost-efficiency** — performance per dollar (a real engineering metric in cloud).
 
 ## Reliability patterns
-- **Retries with backoff** + **idempotency** — recover from transient failures safely.
-- **Circuit breaker** — stop hammering a failing dependency; fail fast, recover gracefully.
-- **Graceful degradation** — serve a reduced experience instead of total failure.
-- **Disaster Recovery (DR)** — **RPO** (how much data you can lose) and **RTO** (how fast you recover) targets; backups, multi-region.
-- **Single Point of Failure (SPOF)** — the thing whose death kills the system; design it out.
+
+<div class="feat-grid">
+  <div class="feat"><span class="feat-ic"><i data-ic="refresh"></i></span><div><strong>Retries + idempotency</strong><p>Recover from transient failures safely, with backoff.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="zap"></i></span><div><strong>Circuit breaker</strong><p>Stop hammering a failing dependency; fail fast, recover gracefully.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="layers"></i></span><div><strong>Graceful degradation</strong><p>Serve a reduced experience instead of total failure.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="database"></i></span><div><strong>Disaster Recovery (DR)</strong><p>RPO (data you can lose) and RTO (time to recover) targets; backups, multi-region.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="target"></i></span><div><strong>Kill the SPOF</strong><p>The single point of failure whose death kills the system — design it out.</p></div></div>
+</div>
 
 <div class="callout callout-note"><span class="cfor"></span><div><span class="ctitle">Interview framing:</span> "First, what are the throughput and latency targets, and the SLO? Then I'd scale horizontally with partitioning, add caching for hot reads, and ensure reliability with retries+idempotency, replicas, and monitoring — while watching cost." That one paragraph hits every -ility.</div></div>
 

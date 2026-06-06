@@ -7,7 +7,7 @@ minutes: 6
 tags: roadmap, study
 ---
 
-If you want a tighter, high-intensity plan (≈20 hrs/week) to reach junior **Data Engineer** interview-readiness, here it is. Adjust dates to your pace — consistency matters more than speed.
+Want to move fast? This is the high-intensity version — roughly **20 hours a week** to reach junior **Data Engineer** interview-readiness in three months. It's demanding, but it's absolutely doable, and there's something energising about a focused sprint. Treat the dates as a guide, not a cage: life happens, and showing up consistently will always beat sprinting and burning out. Make it fit *your* life, and keep showing up.
 
 ## Month 1 — Foundations & SQL
 - **Week 1:** Foundations section + Python setup. Daily: 10 small Python exercises.

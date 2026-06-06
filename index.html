@@ -5,10 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ArchAIst — from zero to AI architect</title>
   <meta name="description" content="ArchAIst — learn data engineering, AI, GenAI and LLM engineering from absolute zero. Interactive lessons, roadmaps, a built-in code runner, and company-wise interview prep." />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237c7cff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 20L12 5l7 15'/%3E%3Cpath d='M8 14h8'/%3E%3Ccircle cx='12' cy='5' r='1.8' fill='%237c7cff' stroke='none'/%3E%3Ccircle cx='5' cy='20' r='1.8' fill='%237c7cff' stroke='none'/%3E%3Ccircle cx='19' cy='20' r='1.8' fill='%237c7cff' stroke='none'/%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237e8ce0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 20L12 5l7 15'/%3E%3Cpath d='M8 14h8'/%3E%3Ccircle cx='12' cy='5' r='1.8' fill='%237e8ce0' stroke='none'/%3E%3Ccircle cx='5' cy='20' r='1.8' fill='%237e8ce0' stroke='none'/%3E%3Ccircle cx='19' cy='20' r='1.8' fill='%237e8ce0' stroke='none'/%3E%3C/svg%3E" />
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 <body>
+  <!-- decorative contour-line backdrop (calm, very low opacity, non-interactive) -->
+  <div class="bg-decor" aria-hidden="true">
+    <svg class="bg-decor-tl" viewBox="0 0 400 400" preserveAspectRatio="xMinYMin slice" fill="none">
+      <path d="M-40 60 C 80 20 160 120 130 200 C 100 280 200 300 360 250"/>
+      <path d="M-40 100 C 90 60 180 160 150 240 C 120 320 220 340 380 290"/>
+      <path d="M-40 140 C 100 100 200 200 170 280 C 140 360 240 380 400 330"/>
+      <path d="M-40 180 C 110 140 220 240 190 320 C 160 400 260 420 420 370"/>
+      <path d="M-40 220 C 120 180 240 280 210 360 C 180 440 280 460 440 410"/>
+    </svg>
+    <svg class="bg-decor-br" viewBox="0 0 400 400" preserveAspectRatio="xMaxYMax slice" fill="none">
+      <path d="M440 340 C 320 380 240 280 270 200 C 300 120 200 100 40 150"/>
+      <path d="M440 300 C 310 340 220 240 250 160 C 280 80 180 60 20 110"/>
+      <path d="M440 260 C 300 300 200 200 230 120 C 260 40 160 20 0 70"/>
+      <path d="M440 220 C 290 260 180 160 210 80 C 240 0 140 -20 -20 30"/>
+      <path d="M440 180 C 280 220 160 120 190 40 C 220 -40 120 -60 -40 -10"/>
+    </svg>
+  </div>
+
   <!-- reading progress -->
   <div class="read-progress" id="readProgress"></div>
 
@@ -16,8 +34,8 @@
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
       <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#7c7cff" />
-        <stop offset="100%" stop-color="#36d6f5" />
+        <stop offset="0%" stop-color="#5f82e0" />
+        <stop offset="100%" stop-color="#e57aa6" />
       </linearGradient>
     </defs>
   </svg>

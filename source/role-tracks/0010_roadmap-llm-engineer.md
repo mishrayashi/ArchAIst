@@ -7,7 +7,7 @@ minutes: 8
 tags: roadmap, llm engineer
 ---
 
-The LLM Engineer works on the models themselves — fine-tuning, serving, optimisation. It's the deepest specialisation, so build Python + data fluency first, then go deep on models.
+Welcome to the deep end. LLM Engineers work on the models themselves — fine-tuning, serving, squeezing out every bit of performance. It's the most specialised track here, and that's precisely what makes it so rewarding once it clicks. Build genuine Python and data fluency first, then go deep on the models. Take your time on this one; depth beats speed every time, and nobody gets here overnight.
 
 ## Phase 1 — Strong Python foundation
 You'll live in Python and PyTorch.

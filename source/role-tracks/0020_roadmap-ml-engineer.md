@@ -7,7 +7,7 @@ minutes: 7
 tags: roadmap, ml engineer
 ---
 
-The ML Engineer puts machine-learning models into reliable production software — software engineering plus ML. Strong overlap with data engineering, so this academy covers a big chunk of it.
+An ML Engineer turns machine-learning models into reliable production software — equal parts software engineering and ML. Here's the happy surprise: it overlaps heavily with data engineering, so a lot of what you learn in this academy counts double toward this role. You're probably closer to it than you think.
 
 ## Phase 1 — Python + SQL fluency
 **Study now:** [Python 1](#/page/py-basics) · [Python 2 — pandas](#/page/py-data) · [SQL 1](#/page/sql-basics)

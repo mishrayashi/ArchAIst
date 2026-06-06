@@ -7,7 +7,7 @@ minutes: 9
 tags: roadmap, genai, llm
 ---
 
-This roadmap assumes you can code in Python (do Phases 1–2 of the DE roadmap first if not). GenAI engineering is very learnable because you mostly *use* powerful models rather than build them.
+Good news first: GenAI engineering is one of the friendliest corners of AI to break into, because you mostly *use* powerful models rather than build them from scratch. You'll want to be comfortable writing Python before you dive in — if you're not there yet, run through Phases 1–2 of the Data Engineer roadmap first; there's no rush, and it'll pay off. Ready when you are. Let's build something.
 
 ## Phase 1 — Python + data fluency (prereq)
 - Solid Python, working with APIs and JSON, environment management.

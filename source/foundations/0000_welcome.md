@@ -13,23 +13,31 @@ Hi. Whether you are in **class 8**, finishing college, or 35 and switching caree
 
 ## What you'll be able to do by the end
 
-- Explain — in plain words — what data engineering, AI, GenAI, and LLMs are, and how they differ.
-- Read and write real code (Python and SQL) to move and clean data.
-- Understand the tools companies actually use (Spark, Airflow, Snowflake, cloud, vector databases…).
-- Follow a concrete **roadmap** for the exact job you want.
-- Answer the questions companies like **Walmart, JPMorgan, Infosys, PwC, KPMG, Amazon** ask in interviews.
+<div class="feat-grid">
+  <div class="feat"><span class="feat-ic"><i data-ic="book"></i></span><div><strong>Speak the language</strong><p>Explain data engineering, AI, GenAI &amp; LLMs in plain words.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="terminal"></i></span><div><strong>Write real code</strong><p>Python &amp; SQL to move and clean data.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="cube"></i></span><div><strong>Know the real tools</strong><p>Spark, Airflow, Snowflake, cloud, vector databases.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="route"></i></span><div><strong>Follow a roadmap</strong><p>A concrete path to the exact job you want.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="message"></i></span><div><strong>Ace interviews</strong><p>Answer what Walmart, JPMorgan, Amazon &amp; more ask.</p></div></div>
+</div>
 
 ## How to use this academy
 
-<div class="callout callout-note"><span class="cfor">🧭</span><div>
-<strong>The path:</strong> Foundations → "Which role is right for me?" → pick a Roadmap → work through the Modules → drill the Interview Bank.
-</div></div>
+Your route through the academy, start to finish:
 
-1. **Don't rush.** Read one lesson, then take a break. Understanding beats speed.
-2. **Type the code yourself.** Don't just read it — type it into a notebook (like Jupyter) or editor and actually run it. Muscle memory matters.
-3. **Mark lessons complete** (button at the bottom of each page) so you can see your progress build up.
-4. **Use the Glossary** whenever a word looks scary. Every term is explained like you're brand new.
-5. **Talk out loud.** When you reach interview questions, answer them aloud before reading the model answer.
+<nav class="pathway pathway-flow" aria-label="The learning path">
+  <span class="pw-step"><span class="pw-n">1</span>Foundations</span>
+  <span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span>
+  <span class="pw-step"><span class="pw-n">2</span>Find your role</span>
+  <span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span>
+  <span class="pw-step"><span class="pw-n">3</span>Pick a roadmap</span>
+  <span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span>
+  <span class="pw-step"><span class="pw-n">4</span>Work the modules</span>
+  <span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span>
+  <span class="pw-step"><span class="pw-n">5</span>Drill interviews</span>
+</nav>
+
+A few habits that make it stick: **read one lesson then pause** (understanding beats speed), **type every code example yourself** and run it, **mark lessons complete** to watch your progress grow, lean on the **Glossary** for any scary word, and **answer interview questions out loud** before reading the model answer.
 
 ## A promise about jargon
 

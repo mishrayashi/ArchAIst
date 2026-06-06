@@ -49,18 +49,15 @@ A pipeline is **idempotent** if running it multiple times produces the *same res
 <div class="callout callout-note"><span class="cfor">🔑</span><div><strong>How to make a load idempotent:</strong> instead of blindly <code>INSERT</code>ing, use <strong>upsert/MERGE</strong> (insert-or-update on a key), or use "delete-then-insert for this partition." Then a retry overwrites cleanly instead of duplicating. Always design for "what happens if this runs twice?"</div></div>
 
 ## Anatomy of a real pipeline
-```text
-[Source DB / API / files]
-        │ extract (incremental, watermark)
-        ▼
-[Raw / Bronze layer]  ← store exactly as received (auditable)
-        │ transform (clean, dedupe, conform types)
-        ▼
-[Cleaned / Silver layer]
-        │ transform (join, aggregate, model into star schema)
-        ▼
-[Business / Gold layer]  → dashboards, ML, AI
-```
+<div class="flow">
+  <div class="flow-node"><strong>Source</strong><span>DB · API · files · events</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i><span>extract — incremental, watermark</span></div>
+  <div class="flow-node tone-bronze"><strong>Bronze · Raw</strong><span>stored exactly as received (auditable)</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i><span>transform — clean, dedupe, conform types</span></div>
+  <div class="flow-node tone-silver"><strong>Silver · Cleaned</strong><span>tidy, validated, conformed</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i><span>transform — join, aggregate, star schema</span></div>
+  <div class="flow-node tone-gold"><strong>Gold · Business</strong><span>dashboards · ML · AI</span></div>
+</div>
 This **Bronze → Silver → Gold** pattern is called **medallion architecture** (popularised by Databricks). Each layer is reproducible from the one before it.
 
 <div class="widget-mount" data-widget="medallion"></div>

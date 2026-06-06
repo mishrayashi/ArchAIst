@@ -11,19 +11,22 @@ tags: data quality, governance
 
 ## The six dimensions of data quality
 Memorise these — they're a great structured answer to "how do you ensure data quality?":
-1. **Accuracy** — does it reflect reality? (Is the price actually ₹500?)
-2. **Completeness** — are required values present? (No missing customer IDs.)
-3. **Consistency** — does it agree across systems? (Same total in two reports.)
-4. **Timeliness / Freshness** — is it up to date? (Today's data loaded by 8am.)
-5. **Validity** — does it match the rules/format? (Email looks like an email; date is a real date.)
-6. **Uniqueness** — no unintended duplicates. (One row per order.)
+
+<div class="feat-grid">
+  <div class="feat"><span class="feat-ic"><i data-ic="target"></i></span><div><strong>Accuracy</strong><p>Does it reflect reality? (Is the price actually ₹500?)</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="check"></i></span><div><strong>Completeness</strong><p>Are required values present? (No missing customer IDs.)</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="layers"></i></span><div><strong>Consistency</strong><p>Does it agree across systems? (Same total in two reports.)</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="clock"></i></span><div><strong>Timeliness</strong><p>Is it up to date? (Today's data loaded by 8am.)</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="grid"></i></span><div><strong>Validity</strong><p>Does it match the rules/format? (A real email, a real date.)</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="cube"></i></span><div><strong>Uniqueness</strong><p>No unintended duplicates. (One row per order.)</p></div></div>
+</div>
 
 ## How you actually enforce quality
 Checks run *inside* the pipeline as a **gate** — bad rows get caught before they reach Gold. Toggle the checks below:
 
 <div class="widget-mount" data-widget="dataQuality"></div>
 
-In practice: schema validation, business rules (`amount > 0`), reconciliation (counts match source↔destination), and freshness alerts — each with a **severity** (*fail* stops the run, *warn* flags, *info* logs) and failures written to an audit table.
+In practice: schema validation, business rules (`amount > 0`), reconciliation (counts match source↔destination), and freshness alerts. Each check carries a **severity** — *fail* stops the run, *warn* flags it, *info* just logs — and failures are written to an audit table.
 
 Tools: **Great Expectations**, **dbt tests**, **Soda**, **Deequ** (Spark). Even simple assertions help:
 ```python

@@ -14,7 +14,19 @@ To understand modern data jobs, you need a simple mental model of how computers 
 - A **client** is a computer asking for something — your phone opening Instagram.
 - A **server** is a computer that answers — a powerful machine in a data centre holding Instagram's data.
 
-When you open an app, your client sends a **request** over the internet; a server sends back a **response** (your photos, messages, etc.). Servers are just computers — usually without screens — running 24/7 in big buildings called **data centres**.
+When you open an app, your client sends a **request** over the internet, and a server sends back a **response** — your photos, messages, and so on.
+
+<div class="flow flow-row">
+  <div class="flow-node"><strong>Client</strong><span>your phone</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Request</strong><span>over the internet</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Server</strong><span>in a data centre</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Response</strong><span>your photos</span></div>
+</div>
+
+Servers are just computers — usually without screens — running 24/7 in big buildings called **data centres**.
 
 <div class="eli"><span class="eli-tag">Explain like I'm new</span>
 You (client) call a restaurant (server) and order food. You don't go into the kitchen; you just send a request and get a response. The internet is the phone line.
@@ -22,7 +34,7 @@ You (client) call a restaurant (server) and order food. You don't go into the ki
 
 ## What is "the cloud"?
 
-The **cloud** simply means *renting* computers, storage, and software over the internet instead of buying your own machines. Instead of your company buying 100 servers (expensive, hard to maintain), you rent exactly what you need, when you need it, from a cloud provider — and give it back when you're done.
+The **cloud** simply means *renting* computers, storage, and software over the internet instead of buying your own machines. Rather than your company buying 100 servers (expensive, hard to maintain), you rent exactly what you need, when you need it, from a cloud provider — and give it back when you're done.
 
 The big three cloud providers (you'll see these constantly):
 
@@ -39,9 +51,11 @@ Why the cloud matters for data engineers:
 
 ## Three things the cloud rents you
 
-1. **Compute** — processing power (machines/CPUs/GPUs to *run* programs).
-2. **Storage** — space to *keep* data (e.g. AWS S3, Azure Blob, Google Cloud Storage).
-3. **Managed services** — ready-made tools so you don't build everything yourself (databases, AI models, pipelines).
+<div class="feat-grid">
+  <div class="feat"><span class="feat-ic"><i data-ic="cube"></i></span><div><strong>Compute</strong><p>Processing power — machines, CPUs, and GPUs to <em>run</em> programs.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="database"></i></span><div><strong>Storage</strong><p>Space to <em>keep</em> data, e.g. AWS S3, Azure Blob, Google Cloud Storage.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="layers"></i></span><div><strong>Managed services</strong><p>Ready-made tools so you don't build everything yourself — databases, AI models, pipelines.</p></div></div>
+</div>
 
 <div class="callout callout-tip"><span class="cfor">💡</span><div><strong>Don't panic about the cloud yet.</strong> You can learn all the core skills (Python, SQL, data modelling) on your own laptop for free. Cloud comes later, and free tiers let you practise without spending money.</div></div>
 

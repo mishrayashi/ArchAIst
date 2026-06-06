@@ -7,7 +7,7 @@ minutes: 7
 tags: study, must-know
 ---
 
-Before any roadmap, internalise *how* to study, or you'll waste months. Most people fail not from lack of intelligence but from bad learning habits.
+Before we touch a single roadmap, let's talk about *how* to learn — because this is exactly where most people quietly lose months. Here's the reassuring truth: nobody washes out of this because they aren't smart enough. They stall because of a handful of fixable habits. Get these five right and everything that follows gets dramatically, almost unfairly, easier.
 
 ## The five rules of learning to code
 

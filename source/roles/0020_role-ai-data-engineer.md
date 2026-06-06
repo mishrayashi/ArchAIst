@@ -11,11 +11,14 @@ An **AI Data Engineer** is a data engineer whose pipelines feed **machine-learni
 
 ## What's different from a normal DE?
 A normal DE delivers clean tables for humans/BI. An **AI Data Engineer** additionally delivers:
-- **Features** for ML models — and often builds/maintains a **feature store** (a system that serves the same computed features for both training and live prediction).
-- **Embeddings & vector data** — converting text/images into numbers (vectors) and loading them into **vector databases** for GenAI search/RAG.
-- **Training datasets** — large, clean, well-labelled, reproducible datasets for model training and fine-tuning.
-- **Real-time data** for live model inference (low-latency streaming).
-- **ML-aware data quality** — watching for *data drift* (when incoming data slowly changes and silently breaks a model).
+
+<div class="feat-grid">
+  <div class="feat"><span class="feat-ic"><i data-ic="layers"></i></span><div><strong>Features</strong><p>Builds and maintains a feature store that serves the same computed features for both training and live prediction.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="database"></i></span><div><strong>Embeddings & vector data</strong><p>Turns text/images into vectors and loads them into vector databases for GenAI search and RAG.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="cube"></i></span><div><strong>Training datasets</strong><p>Large, clean, well-labelled, reproducible datasets for model training and fine-tuning.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="zap"></i></span><div><strong>Real-time data</strong><p>Low-latency streaming for live model inference.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="target"></i></span><div><strong>ML-aware data quality</strong><p>Watches for data drift, when incoming data slowly changes and silently breaks a model.</p></div></div>
+</div>
 
 ## Extra skills on top of the DE stack
 | Area | What to add |

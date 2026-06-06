@@ -7,7 +7,7 @@ minutes: 8
 tags: roadmap, ai data engineer
 ---
 
-The AI Data Engineer is a Data Engineer whose pipelines feed AI systems. So you build the full DE foundation first, then add the AI-specific data layer. Each phase links to the exact lessons to study.
+An AI Data Engineer is a Data Engineer whose pipelines feed AI systems — so you'll build a rock-solid data-engineering core first, then layer the AI-specific skills on top. If that order feels slow, hang in there: the foundation is exactly what makes the exciting AI work actually reliable in production. Each phase points you to the precise lessons to study, so the path stays clear.
 
 ## Phase 1 — Become a solid Data Engineer first
 This is non-negotiable: AI data work rests on strong data engineering.

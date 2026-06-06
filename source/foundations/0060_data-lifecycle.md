@@ -11,15 +11,17 @@ Before diving into roles and tools, see the **whole journey** data takes inside 
 
 <div class="widget-mount" data-widget="pipeline"></div>
 
-```text
-   SOURCES          INGEST          STORE           TRANSFORM        SERVE
- ┌─────────┐     ┌─────────┐     ┌──────────┐     ┌──────────┐    ┌──────────┐
- │ Apps    │     │ Collect │     │ Data lake│     │ Clean    │    │ Dashboards│
- │ Sensors │ ──▶ │ & load  │ ──▶ │ + Data   │ ──▶ │ join,    │──▶ │ ML models │
- │ Files   │     │ (batch/ │     │ warehouse│     │ aggregate│    │ AI apps   │
- │ APIs    │     │ stream) │     │          │     │ model    │    │ reports   │
- └─────────┘     └─────────┘     └──────────┘     └──────────┘    └──────────┘
-```
+<div class="flow flow-row">
+  <div class="flow-node"><strong>Sources</strong><span>apps · sensors · files · APIs</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Ingest</strong><span>collect &amp; load (batch / stream)</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node tone-bronze"><strong>Store</strong><span>data lake + warehouse</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node tone-silver"><strong>Transform</strong><span>clean · join · aggregate · model</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node tone-gold"><strong>Serve</strong><span>dashboards · ML · AI apps · reports</span></div>
+</div>
 
 ## The five stages
 

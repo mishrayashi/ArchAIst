@@ -24,14 +24,13 @@ Don't reach for streaming unless you truly need low latency — it's harder to b
 
 ## Kafka in one picture
 Kafka is a distributed **log** — an append-only sequence of events that producers write and consumers read, decoupled from each other.
-```text
- Producers              Kafka cluster (topics)            Consumers
- (apps emitting   ──▶  ┌──────────────────────┐  ──▶   (services reading
-  events)              │ topic: "orders"      │          & reacting)
-                       │  part0: e1 e2 e3 ...  │
-                       │  part1: e1 e2 e3 ...  │
-                       └──────────────────────┘
-```
+<div class="flow flow-row">
+  <div class="flow-node"><strong>Producers</strong><span>apps emitting events</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node tone-gold"><strong>Kafka topic "orders"</strong><span>part0: e1 e2 e3 … · part1: e1 e2 e3 …</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Consumers</strong><span>services reading &amp; reacting</span></div>
+</div>
 
 Core vocabulary:
 - **Event / message:** one record (e.g. "order #123 placed, ₹500").

@@ -38,14 +38,17 @@ Toggle the two zoom levels to feel the difference:
 LLD output is the concrete **schema, keys, and partitioning** (see the zoomed-in view in the toggle above) — plus class/API design and idempotency.
 
 ## How they relate
-HLD comes first (the shape), LLD second (the details). HLD says "we'll use a warehouse with a star schema." LLD says "here is fact_sales, its columns, keys, partition strategy, and the upsert logic." A good engineer can zoom between both fluidly.
+HLD comes first (the shape), LLD second (the details). HLD says "we'll use a warehouse with a star schema." LLD says "here is fact_sales — its columns, keys, partition strategy, and upsert logic." A good engineer zooms between both fluidly.
 
 ## OOP for LLD (for data engineers too)
 LLD often expects basic object-oriented design. The four pillars in plain terms:
-- **Encapsulation:** bundle data + the methods that act on it; hide internals.
-- **Abstraction:** expose a simple interface, hide complexity (`extractor.run()`).
-- **Inheritance:** a class reuses/extends another (`PostgresExtractor(BaseExtractor)`).
-- **Polymorphism:** different classes share an interface so callers don't care which one they use.
+
+<div class="feat-grid">
+  <div class="feat"><span class="feat-ic"><i data-ic="cube"></i></span><div><strong>Encapsulation</strong><p>Bundle data + the methods that act on it; hide internals.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="layers"></i></span><div><strong>Abstraction</strong><p>Expose a simple interface, hide complexity (<code>extractor.run()</code>).</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="network"></i></span><div><strong>Inheritance</strong><p>A class reuses/extends another (<code>PostgresExtractor(BaseExtractor)</code>).</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="refresh"></i></span><div><strong>Polymorphism</strong><p>Different classes share an interface so callers don't care which one they use.</p></div></div>
+</div>
 
 ```python
 class BaseExtractor:

@@ -367,28 +367,101 @@
         roadmap: "#/page/roadmap-data-analyst" },
     };
     var keys = Object.keys(roles);
-    body.innerHTML = '<div class="role-pick" id="rolePick"></div><div id="roleDetail"></div>';
-    var pick = body.querySelector("#rolePick");
+
+    // Interactive mind-map: a central hub branches to each role. Hovering a
+    // node previews it in the side panel; leaving clears back to the bare
+    // structure; clicking a node opens that role's roadmap.
+    body.innerHTML =
+      '<div class="rx">' +
+        '<div class="rx-stage" id="rxStage">' +
+          '<svg class="rx-edges" id="rxEdges" aria-hidden="true"></svg>' +
+          '<div class="rx-hub" id="rxHub">' + window.icon("compass") + "<span>Your path</span></div>" +
+        "</div>" +
+        '<aside class="rx-info" id="rxInfo" aria-live="polite" hidden></aside>' +
+        '<div class="rx-hint" id="rxHint">Hover a role to preview it' + " · " + "click to open its roadmap</div>" +
+      "</div>";
+
+    var rx = body.querySelector(".rx");
+    var stage = body.querySelector("#rxStage");
+    var edges = body.querySelector("#rxEdges");
+    var hub = body.querySelector("#rxHub");
+    var info = body.querySelector("#rxInfo");
+
+    var nodeEls = {};
     keys.forEach(function (k) {
       var r = roles[k];
-      var b = document.createElement("button"); b.className = "role-opt"; b.dataset.k = k;
-      b.innerHTML = '<div class="ro-name">' + k + '</div><div class="ro-tag">' + r.tag + "</div>";
-      pick.appendChild(b);
+      var a = document.createElement("a");
+      a.className = "rx-node"; a.href = r.roadmap; a.dataset.k = k;
+      a.innerHTML = '<span class="rx-node-dot"></span><span class="rx-node-body"><span class="rx-node-t">' + k +
+        '</span><span class="rx-node-tag">' + r.tag + "</span></span>";
+      stage.appendChild(a);
+      nodeEls[k] = a;
     });
-    var detail = body.querySelector("#roleDetail");
-    function show(k) {
-      var r = roles[k];
-      pick.querySelectorAll(".role-opt").forEach(function (b) { b.classList.toggle("active", b.dataset.k === k); });
-      detail.innerHTML = '<div class="role-detail"><h4>' + k + "</h4><p style=\"margin:2px 0 0\">" + r.one + "</p>" +
-        '<div class="rd-skills">' + r.skills.map(function (s) { return "<span>" + s + "</span>"; }).join("") + "</div>" +
-        "<strong style=\"font-size:13px\">Your roadmap at a glance:</strong><ul class=\"rd-steps\">" + r.steps.map(function (s) { return "<li>" + s + "</li>"; }).join("") + "</ul>" +
-        '<div class="rd-cta" style="display:flex;gap:9px;flex-wrap:wrap">' +
-          '<a class="btn btn-primary" href="' + r.roadmap + '">' + window.icon("route", "ic-sm") + " Open the " + k + " roadmap</a>" +
-          '<a class="btn btn-ghost" href="#/page/role-comparison-table">' + window.icon("grid", "ic-sm") + " Compare all roles</a>" +
-        "</div></div>";
+
+    function layout() {
+      var W = stage.clientWidth || 720;
+      var compact = W < 680;
+      rx.classList.toggle("rx-is-compact", compact);
+      stage.classList.toggle("rx-compact", compact);
+      if (compact) { edges.innerHTML = ""; stage.style.height = ""; keys.forEach(function (k) { var e = nodeEls[k]; e.style.left = ""; e.style.top = ""; }); hub.style.left = ""; hub.style.top = ""; return; }
+      var rowH = 52, padY = 20;
+      var H = keys.length * rowH + padY * 2;
+      stage.style.height = H + "px";
+      edges.setAttribute("width", W); edges.setAttribute("height", H);
+      var hubX = 14, hubY = H / 2;
+      hub.style.left = hubX + "px"; hub.style.top = hubY + "px";
+      var hubRight = hubX + hub.offsetWidth;
+      var reserve = 268;                              // right zone for the (overlay) info panel
+      var nodeX = Math.min(Math.max(hubRight + 70, Math.round(W * 0.32)), Math.max(hubRight + 70, W - reserve - 210));
+      var paths = "";
+      keys.forEach(function (k, i) {
+        var y = padY + rowH / 2 + i * rowH;
+        var e = nodeEls[k];
+        e.style.left = nodeX + "px"; e.style.top = y + "px";
+        var x1 = hubRight, mx = (x1 + nodeX) / 2;
+        paths += '<path class="rx-edge" data-k="' + k + '" d="M' + x1 + "," + hubY + " C" + mx + "," + hubY + " " + mx + "," + y + " " + nodeX + "," + y + '"/>';
+      });
+      edges.innerHTML = paths;
     }
-    pick.querySelectorAll(".role-opt").forEach(function (b) { b.addEventListener("click", function () { show(b.dataset.k); }); });
-    show("Data Engineer");
+
+    var hideTimer = null;
+    function clearSel() {
+      info.hidden = true;
+      stage.classList.remove("rx-dim");
+      keys.forEach(function (k) { nodeEls[k].classList.remove("is-active"); });
+      edges.querySelectorAll(".rx-edge").forEach(function (p) { p.classList.remove("is-active"); });
+    }
+    function showRole(k) {
+      if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+      var r = roles[k];
+      stage.classList.add("rx-dim");
+      keys.forEach(function (kk) { nodeEls[kk].classList.toggle("is-active", kk === k); });
+      edges.querySelectorAll(".rx-edge").forEach(function (p) { p.classList.toggle("is-active", p.dataset.k === k); });
+      info.innerHTML =
+        '<span class="rx-info-tag">' + r.tag + "</span>" +
+        "<h4>" + k + "</h4>" +
+        '<p class="rx-info-one">' + r.one + "</p>" +
+        '<div class="rx-skills">' + r.skills.map(function (s) { return "<span>" + s + "</span>"; }).join("") + "</div>" +
+        '<div class="rx-glance">Roadmap at a glance</div>' +
+        '<ol class="rx-steps">' + r.steps.map(function (s) { return "<li>" + s + "</li>"; }).join("") + "</ol>" +
+        '<a class="btn btn-primary rx-cta" href="' + r.roadmap + '">' + window.icon("route", "ic-sm") + " Open roadmap</a>";
+      info.hidden = false;
+    }
+    function scheduleClear() { if (hideTimer) clearTimeout(hideTimer); hideTimer = setTimeout(clearSel, 160); }
+
+    keys.forEach(function (k) {
+      var e = nodeEls[k];
+      e.addEventListener("mouseenter", function () { showRole(k); });
+      e.addEventListener("mouseleave", scheduleClear);
+      e.addEventListener("focus", function () { showRole(k); });
+      e.addEventListener("blur", scheduleClear);
+    });
+    info.addEventListener("mouseenter", function () { if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; } });
+    info.addEventListener("mouseleave", scheduleClear);
+
+    layout();
+    if (window.ResizeObserver) { new ResizeObserver(layout).observe(stage); }
+    else window.addEventListener("resize", layout);
   };
 
   /* ---------- 10. SQL window functions ---------- */

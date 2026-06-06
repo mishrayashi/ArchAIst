@@ -9,6 +9,16 @@ tags: python, code
 
 Python is the main language of data and AI. This lesson takes you from "never coded" to writing useful little programs. **Type every example yourself** — open `coding.ipynb` or any `.py` file and run it.
 
+<div class="flow flow-row">
+  <div class="flow-node"><strong>Values</strong><span>types &amp; variables</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Collections</strong><span>lists &amp; dicts</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Logic</strong><span>if / loops</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Functions</strong><span>reuse</span></div>
+</div>
+
 ## Printing & comments
 ```python
 # A comment starts with '#'. Python ignores it. Use comments to explain code.
@@ -27,6 +37,14 @@ print(name, "is", age, "years old")
 ```
 
 ## The core data types
+<div class="feat-grid">
+  <div class="feat"><span class="feat-ic"><i data-ic="cube"></i></span><div><strong>str</strong><p>text, in quotes.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="cube"></i></span><div><strong>int</strong><p>whole numbers.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="cube"></i></span><div><strong>float</strong><p>decimal numbers.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="cube"></i></span><div><strong>bool</strong><p>True or False.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="cube"></i></span><div><strong>None</strong><p>"no value" yet.</p></div></div>
+</div>
+
 ```python
 city = "Mumbai"              # str  — text
 count = 42                   # int  — whole number

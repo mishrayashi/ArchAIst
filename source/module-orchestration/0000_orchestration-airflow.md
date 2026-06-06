@@ -15,9 +15,12 @@ Cooking a big dinner: you can't fry the rice before boiling it; some dishes can 
 
 ## The core concept: a DAG
 Airflow models a workflow as a **DAG** — a **Directed Acyclic Graph**:
-- **Directed:** tasks have a direction (A then B).
-- **Acyclic:** no loops (you can't depend on yourself — it would never finish).
-- **Graph:** tasks (nodes) connected by dependencies (edges).
+
+<div class="feat-grid">
+  <div class="feat"><span class="feat-ic"><i data-ic="arrowRight"></i></span><div><strong>Directed</strong><p>Tasks have a direction: A then B.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="refresh"></i></span><div><strong>Acyclic</strong><p>No loops — you can't depend on yourself, or it would never finish.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="network"></i></span><div><strong>Graph</strong><p>Tasks (nodes) connected by dependencies (edges).</p></div></div>
+</div>
 
 <div class="widget-mount" data-widget="dag"></div>
 
@@ -57,7 +60,7 @@ That `e >> t >> l` line is the magic: it tells Airflow the order. Tasks with no 
 <div class="callout callout-note"><span class="cfor"></span><div><span class="ctitle">Why it matters:</span> dependencies, scheduling, observability, automatic retries + alerts, and clean backfills — all in one place.</div></div>
 
 ## Modern alternatives (good to name-drop)
-Airflow is the incumbent, but know these exist: **Dagster** and **Prefect** (more Pythonic, asset-aware), **dbt** (transformation orchestration in SQL), and cloud-native ones (**AWS Step Functions**, **Azure Data Factory**, **GCP Composer** = managed Airflow).
+Airflow is the incumbent, but know these too: **Dagster** and **Prefect** (more Pythonic, asset-aware), **dbt** (SQL transformation orchestration), and cloud-native options (**AWS Step Functions**, **Azure Data Factory**, **GCP Composer** = managed Airflow).
 
 ## Practice
 1. Install Airflow locally (or use the official Docker compose) and run the example DAG.

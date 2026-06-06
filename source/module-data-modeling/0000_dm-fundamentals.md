@@ -24,10 +24,13 @@ Operational databases are **normalized**; analytical warehouses are often **deno
 
 <div class="widget-mount" data-widget="normalization"></div>
 
-The three you must know:
-- **1NF (First Normal Form):** each cell holds a single value; no repeating groups. (No "phone1, phone2, phone3" columns.)
-- **2NF:** 1NF + every non-key column depends on the *whole* primary key (matters for composite keys).
-- **3NF:** 2NF + no column depends on another non-key column (no "transitive" dependencies).
+The three you must know build on each other — each form assumes the one inside it:
+
+<div class="nest"><div class="nest-l nest-1"><span class="nest-t">3NF</span><em>no transitive dependencies — no non-key column depends on another non-key column</em>
+  <div class="nest-l nest-2"><span class="nest-t">2NF</span><em>every non-key column depends on the whole primary key (matters for composite keys)</em>
+    <div class="nest-l nest-3"><span class="nest-t">1NF</span><em>each cell holds a single value; no repeating groups (no "phone1, phone2, phone3" columns)</em></div>
+  </div>
+</div></div>
 
 <div class="eli"><span class="eli-tag">Explain like I'm new</span>
 Instead of writing a customer's full address on every single order, you store the customer once in a <code>customers</code> table and just reference their <code>id</code> on each order. Change the address in one place; everything stays correct.
@@ -59,8 +62,8 @@ GROUP BY d.month, p.category;
 ```
 
 **Star vs Snowflake schema:**
-- **Star:** dimensions are flat (denormalized). Simple, fast, fewer joins. *Default choice.*
-- **Snowflake:** dimensions are further split into sub-tables (normalized). Saves space, more joins, more complex. Use only when dimensions are huge.
+- **Star:** flat (denormalized) dimensions. Simple, fast, fewer joins. *Default choice.*
+- **Snowflake:** dimensions split further into sub-tables (normalized). Saves space but adds joins and complexity. Use only when dimensions are huge.
 
 ## Keys
 - **Primary key (PK):** uniquely identifies a row (e.g. `customer_id`).

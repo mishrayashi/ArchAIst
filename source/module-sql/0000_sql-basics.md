@@ -59,7 +59,7 @@ SELECT MIN(amount), MAX(amount) FROM orders;
 ```
 
 ## GROUP BY — aggregate *per category*
-This is where SQL gets powerful. "Total sales **per** city," "orders **per** customer." Hit play below and switch between SUM / COUNT / AVG to *see* the rows collapse into one row per group:
+This is where SQL gets powerful: "total sales **per** city," "orders **per** customer." Hit play and switch between SUM / COUNT / AVG to *see* rows collapse into one row per group:
 
 <div class="widget-mount" data-widget="groupBy"></div>
 
@@ -106,6 +106,9 @@ LEFT JOIN orders AS o ON c.id = o.cust_id;
 
 ## The logical order SQL runs in
 You *write* SELECT first, but the database *executes* in this order — knowing this fixes most confusion:
+
+<nav class="pathway pathway-flow"><span class="pw-step"><span class="pw-n">1</span>FROM</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">2</span>JOIN</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">3</span>WHERE</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">4</span>GROUP BY</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">5</span>HAVING</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">6</span>SELECT</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">7</span>ORDER BY</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">8</span>LIMIT</span></nav>
+
 ```text
 FROM → JOIN → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT
 ```

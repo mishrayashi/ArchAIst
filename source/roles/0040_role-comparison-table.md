@@ -22,7 +22,9 @@ Keep this page bookmarked. It's the cheat-sheet for the whole career landscape.
 | **LLM Engineer** | Builds | PyTorch, HF transformers, GPUs, vLLM | High | wants to go deep on the models |
 
 ## How they collaborate on one real project
-Imagine a bank building an **AI assistant that answers customer questions from policy documents**:
+Imagine a bank building an **AI assistant that answers customer questions from policy documents**. The work flows down the chain, each role handing off to the next:
+
+<nav class="pathway pathway-flow"><span class="pw-step"><span class="pw-n">1</span>Data Engineer</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">2</span>AI Data Engineer</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">3</span>GenAI Engineer</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">4</span>LLM Engineer</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">5</span>Data Scientist / Analyst</span></nav>
 
 1. **Data Engineer** builds pipelines that collect and clean all the policy PDFs and customer data into a lake/warehouse.
 2. **AI Data Engineer** converts documents into **embeddings** and loads them into a **vector database**; sets up the feature/data flow.

@@ -42,7 +42,7 @@ df.loc[df["city"] == "Delhi", "sales"]  # sales for Delhi rows
 ```
 
 ## Cleaning data — the daily reality
-Real data is messy. Cleaning it is 70% of the job.
+Real data is messy — cleaning it is roughly 70% of the job.
 ```python
 df.isnull().sum()                 # count missing values per column
 df = df.dropna()                  # drop rows with missing values
@@ -99,6 +99,14 @@ print("Done! Wrote", len(report), "rows.")
 ```
 
 You just wrote your first **ETL** (Extract-Transform-Load) job in pandas — the exact pattern you'll scale up with Spark later.
+
+<div class="flow flow-row">
+  <div class="flow-node tone-bronze"><strong>Extract</strong><span>read_csv</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node tone-silver"><strong>Transform</strong><span>clean, group</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node tone-gold"><strong>Load</strong><span>to_csv</span></div>
+</div>
 
 ## Practice
 1. Load any CSV (find one online), print `.info()` and `.describe()`.

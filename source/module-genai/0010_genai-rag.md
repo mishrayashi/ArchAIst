@@ -30,15 +30,29 @@ RAG = **retrieve** relevant info, then **augment** the prompt with it, so the mo
 
 <div class="widget-mount" data-widget="rag"></div>
 
-```text
-INDEXING (offline, a data pipeline!):
-  documents → split into chunks → embed each chunk → store in vector DB
+<div class="flow-title">Indexing · offline — this is a data pipeline</div>
+<div class="flow flow-row">
+  <div class="flow-node"><strong>Documents</strong></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Chunks</strong></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Embed</strong></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node tone-gold"><strong>Vector DB</strong></div>
+</div>
 
-ANSWERING (at question time):
-  user question → embed it → search vector DB for top-k similar chunks
-                → stuff those chunks into the prompt as context
-                → LLM answers using ONLY that context  → grounded answer + sources
-```
+<div class="flow-title">Answering · at question time</div>
+<div class="flow flow-row">
+  <div class="flow-node"><strong>Question</strong></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Embed</strong></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Search top-k</strong><span>nearest chunks</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Augment prompt</strong><span>chunks as context</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node tone-gold"><strong>Grounded answer</strong><span>+ sources</span></div>
+</div>
 
 ```python
 # Conceptual RAG

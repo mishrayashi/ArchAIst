@@ -13,16 +13,19 @@ These two titles overlap a lot and many companies blur them. Here's the cleanest
 A **GenAI (Generative AI) Engineer** is, at heart, a **software engineer who builds products powered by generative models** — usually by *calling* existing models (Claude, GPT, etc.) rather than training them.
 
 Typical work:
-- Build **RAG** systems (Retrieval-Augmented Generation) — a chatbot that answers using *your company's* documents. (You'll learn RAG hands-on in the GenAI module.)
-- **Prompt engineering** — designing the instructions given to the model.
-- Build **AI agents** — models that can use tools, call APIs, and take multi-step actions.
-- Integrate models into apps, handle **embeddings + vector search**, manage **cost, latency, and safety**.
-- Evaluate outputs (**evals**) and reduce **hallucinations** (when a model confidently makes things up).
+
+<div class="feat-grid">
+  <div class="feat"><span class="feat-ic"><i data-ic="database"></i></span><div><strong>RAG systems</strong><p>A chatbot that answers from your company's documents. You'll build RAG hands-on in the GenAI module.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="message"></i></span><div><strong>Prompt engineering</strong><p>Designing the instructions you give the model.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="route"></i></span><div><strong>AI agents</strong><p>Models that use tools, call APIs, and take multi-step actions.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="layers"></i></span><div><strong>Integration</strong><p>Embeddings and vector search, plus managing cost, latency, and safety.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="check"></i></span><div><strong>Evals</strong><p>Measure output quality and reduce hallucinations (when a model confidently makes things up).</p></div></div>
+</div>
 
 Skills: Python, API integration, vector databases, frameworks like **LangChain / LlamaIndex**, prompt design, basic web/backend.
 
 ## LLM Engineer — works *deeper* on the models themselves
-An **LLM Engineer** goes one layer down — closer to the model's internals:
+An **LLM Engineer** works one layer down, closer to the model's internals:
 - **Fine-tuning** models on custom data (full fine-tuning or efficient methods like **LoRA / QLoRA**).
 - **Serving & optimising** models: quantization, batching, GPU inference, tools like **vLLM**.
 - Building **evaluation** harnesses and benchmarks.

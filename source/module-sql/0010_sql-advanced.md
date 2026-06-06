@@ -7,7 +7,7 @@ minutes: 13
 tags: sql, code, must-know
 ---
 
-Intermediate SQL is what separates "can query" from "got hired." These topics appear in nearly every data engineering interview.
+Intermediate SQL separates "can query" from "got hired." These topics appear in nearly every data engineering interview.
 
 ## CTEs (Common Table Expressions) — readable building blocks
 A CTE (`WITH ... AS`) names a temporary result so you can build complex queries step by step instead of nesting messy subqueries.
@@ -87,12 +87,15 @@ SELECT * FROM orders WHERE product IS NULL;        -- never use = NULL
 
 ## Query optimisation — interview gold
 When asked "how would you make a slow query faster?", hit these:
-1. **Indexes** — add an index on columns used in JOINs and WHERE filters. An index is like a book's index: the DB finds rows without scanning every page.
-2. **Select only needed columns** — avoid `SELECT *` on wide tables.
-3. **Filter early** — push `WHERE` conditions to reduce rows before joining/aggregating.
-4. **Avoid functions on indexed columns** in WHERE (`WHERE YEAR(date)=2024` can't use the index; `WHERE date >= '2024-01-01'` can).
-5. **Partition large tables** (by date) so the engine scans less.
-6. **Read the EXPLAIN plan** — it shows whether the DB does a fast index seek or a slow full scan.
+
+<div class="feat-grid">
+  <div class="feat"><span class="feat-ic"><i data-ic="zap"></i></span><div><strong>Indexes</strong><p>Index columns used in JOINs and WHERE. Like a book's index, the DB finds rows without scanning every page.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="grid"></i></span><div><strong>Select needed columns</strong><p>Avoid <code>SELECT *</code> on wide tables.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="target"></i></span><div><strong>Filter early</strong><p>Push <code>WHERE</code> conditions to cut rows before joining or aggregating.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="search"></i></span><div><strong>Keep indexes usable</strong><p>Avoid functions on indexed columns: <code>WHERE YEAR(date)=2024</code> can't use the index; <code>WHERE date &gt;= '2024-01-01'</code> can.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="layers"></i></span><div><strong>Partition large tables</strong><p>Partition by date so the engine scans less.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="chart"></i></span><div><strong>Read the EXPLAIN plan</strong><p>Shows whether the DB does a fast index seek or a slow full scan.</p></div></div>
+</div>
 
 <div class="callout callout-tip"><span class="cfor">💡</span><div><strong>Interview tip:</strong> When they say "optimise this query," always say "first I'd run <code>EXPLAIN</code> to see the actual bottleneck." It signals real experience.</div></div>
 

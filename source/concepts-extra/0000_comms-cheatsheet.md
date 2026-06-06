@@ -7,7 +7,7 @@ minutes: 9
 tags: system design, communication, must-know
 ---
 
-Half of seniority is **naming things correctly** so teammates instantly know what you mean. When you say "this is the LLD" or "we'll use a medallion architecture" or "that's a RAG problem," everyone aligns in one sentence. This page is your translation table — the approach, what it means, and *when you'd say it.*
+Half of seniority is **naming things correctly** so teammates instantly know what you mean. Say "this is the LLD" or "that's a RAG problem," and the whole room aligns in one sentence. This page is your translation table — the term, what it means, and *when you'd say it.*
 
 ## The "what am I even talking about?" table
 
@@ -31,14 +31,17 @@ Half of seniority is **naming things correctly** so teammates instantly know wha
 | "We'll **backfill**" | reprocess historical periods | after a logic fix or new pipeline |
 
 ## A mental checklist for *any* design conversation
-When someone describes a system, silently slot it into these buckets — it's how senior engineers think:
-1. **Batch or streaming?** (latency requirement)
-2. **What's the source of truth?** (where the canonical data lives)
-3. **How does data get in?** (ingestion: pull/push, batch/CDC/stream)
-4. **How is it stored & modelled?** (lake/warehouse, schema, grain, partitioning)
-5. **How is it served?** (BI, API, model, feature store)
+When someone describes a system, silently walk it through these buckets — it's how senior engineers think:
+
+<nav class="pathway pathway-flow"><span class="pw-step"><span class="pw-n">1</span>Batch or streaming?</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">2</span>Source of truth?</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">3</span>Ingestion?</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">4</span>Storage & model?</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">5</span>Serving?</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">6</span>The -ilities</span><span class="pw-arrow"><i data-ic="arrowRight" class="ic-sm"></i></span><span class="pw-step"><span class="pw-n">7</span>What breaks?</span></nav>
+
+1. **Batch or streaming?** — the latency requirement.
+2. **What's the source of truth?** — where the canonical data lives.
+3. **How does data get in?** — ingestion: pull/push, batch/CDC/stream.
+4. **How is it stored & modelled?** — lake/warehouse, schema, grain, partitioning.
+5. **How is it served?** — BI, API, model, feature store.
 6. **The -ilities:** scalability, reliability, consistency, cost, security.
-7. **What breaks, and what happens then?** (retries, idempotency, alerting, DR)
+7. **What breaks, and what happens then?** — retries, idempotency, alerting, DR.
 
 <div class="callout callout-tip"><span class="cfor"></span><div><span class="ctitle">Pro move:</span> in interviews and standups, narrate which layer you're in — "stepping down to the LLD now" or "that's an ingestion concern, not transformation." It signals you have the mental map, not just the facts.</div></div>
 

@@ -61,7 +61,15 @@ A subtle distinction interviewers and senior engineers care about:
 - **Information** — data with context: `patient temperature = 38.5°C`.
 - **Knowledge** — information you can act on: `38.5°C is a fever → flag for review`.
 
-Your whole pipeline is a machine that climbs this ladder: collect raw **data**, add structure and context to make **information**, then aggregate and model it into **knowledge** that drives a decision.
+<div class="flow flow-row">
+  <div class="flow-node tone-bronze"><strong>Data</strong><span>raw fact</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node tone-silver"><strong>Information</strong><span>fact + context</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node tone-gold"><strong>Knowledge</strong><span>something you act on</span></div>
+</div>
+
+Your whole pipeline climbs this ladder: collect raw **data**, add context to make **information**, then model it into **knowledge** that drives a decision.
 
 <div class="pro"><span class="pro-tag">Going deeper · for the experienced</span>
 The structured/semi/unstructured split maps directly to <em>storage and processing choices</em>. Structured → relational tables / columnar warehouses (great for SQL, compression, BI). Semi-structured (JSON/Avro/Parquet) → schema-on-read lakes and nested types; you trade strict schemas for flexibility and pay it back with schema evolution and contracts. Unstructured (text/image/audio) → object storage + embeddings + vector indexes for similarity search. A lot of "AI data engineering" is precisely the work of turning unstructured blobs into structured features and vectors the models can consume.

@@ -28,9 +28,17 @@ It's an extraordinarily good autocomplete — one <em>token</em> at a time, with
 - **Transformer:** the neural-network architecture behind modern LLMs; its key trick is **attention** (weighing which earlier tokens matter for the next one).
 
 ## How a model is built (3 stages, high level)
-1. **Pre-training:** learn language by predicting next tokens on massive text. Expensive; done by big labs.
-2. **Fine-tuning:** further training on specific data/tasks (covered next lesson).
-3. **Alignment (RLHF/RLAIF):** tuning so the model is helpful, honest, and safe via human/AI feedback.
+<div class="flow flow-row">
+  <div class="flow-node tone-bronze"><strong>Pre-training</strong><span>predict next tokens on massive text</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node tone-silver"><strong>Fine-tuning</strong><span>specific data/tasks</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node tone-gold"><strong>Alignment</strong><span>RLHF/RLAIF feedback</span></div>
+</div>
+
+- **Pre-training:** learn language by predicting next tokens on massive text. Expensive; done by big labs.
+- **Fine-tuning:** further training on specific data/tasks (covered next lesson).
+- **Alignment (RLHF/RLAIF):** tuning so the model is helpful, honest, and safe via human/AI feedback.
 
 ## Calling an LLM from code
 ```python
@@ -66,6 +74,6 @@ STRONG: "You are a senior analyst. Given tables customers(id,name,city)
 ```
 
 ## What "GenAI engineering" really is
-90% of GenAI jobs are *not* training models. They're: designing prompts, connecting models to your data (RAG — next lesson), building agents, controlling cost/latency, evaluating quality, and shipping reliable features. It's software + data engineering with a model in the loop — which is why your DE foundation is a superpower here.
+90% of GenAI jobs are *not* training models. They're designing prompts, connecting models to your data (RAG — next lesson), building agents, controlling cost/latency, evaluating quality, and shipping reliable features. It's software + data engineering with a model in the loop — which is why your DE foundation is a superpower here.
 
 > **Key takeaway:** An LLM predicts the next **token**; key knobs are **context window** and **temperature**; the central risk is **hallucination**. Most GenAI work is *using* models well via strong **prompting**, structured output, and grounding — not training them.

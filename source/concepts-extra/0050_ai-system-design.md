@@ -10,6 +10,17 @@ tags: ai, genai, mlops, must-know
 The vocabulary of putting AI into production — what an **AI Data Engineer / GenAI Engineer** must speak fluently. Many of these are the "hidden terms" people drop in meetings.
 
 ## The GenAI / RAG stack
+
+<div class="flow flow-row">
+  <div class="flow-node"><strong>Embed</strong><span>text → vector</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Vector DB</strong><span>nearest match</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Re-rank</strong><span>best few</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Generate</strong><span>grounded answer</span></div>
+</div>
+
 - **Embedding** — text/image turned into a vector capturing meaning. See [GenAI 2](#/page/genai-rag).
 - **Vector database** — stores embeddings, finds nearest ones fast (pgvector, FAISS, Pinecone, Milvus).
 - **RAG (Retrieval-Augmented Generation)** — retrieve relevant chunks, prompt the LLM to answer from them. The default "answer from our data" pattern.
@@ -48,7 +59,7 @@ The vocabulary of putting AI into production — what an **AI Data Engineer / Ge
 - **Concept drift** — the input→output relationship itself changes.
 - **Training–serving skew** — features computed differently in training vs production (a top cause of "works in the notebook, fails in prod").
 - **A/B testing** — compare model/feature variants on live traffic.
-- **Canary / blue-green / shadow deployment** — roll out safely: to a small slice (canary), to a parallel environment you flip to (blue-green), or by running the new model alongside without serving its output (shadow).
+- **Canary / blue-green / shadow deployment** — three ways to roll out safely: a small traffic slice (canary), a parallel environment you flip to (blue-green), or running the new model alongside without serving its output (shadow).
 
 <div class="callout callout-note"><span class="cfor"></span><div><span class="ctitle">Say it right:</span> "This is a RAG problem, not a fine-tuning one." "We need a feature store to avoid training–serving skew." "Let's shadow-deploy the new model and watch for drift." These sentences are what separate someone who *uses* AI tools from someone who *engineers* AI systems.</div></div>
 

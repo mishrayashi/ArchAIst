@@ -10,7 +10,7 @@ tags: scd, data modeling, must-know
 **SCD = Slowly Changing Dimensions.** This is one of the most-asked data-engineering interview topics — and many experienced engineers explain it poorly. Master it and you'll stand out.
 
 ## The problem SCD solves
-Dimension attributes change over time. A customer moves city. A product changes category. A salesperson changes region. **Question: when the value changes, do we overwrite history, or keep it?** How you answer defines the SCD *type*.
+Dimension attributes change over time: a customer moves city, a product changes category, a salesperson changes region. **When the value changes, do we overwrite history or keep it?** How you answer defines the SCD *type*.
 
 <div class="eli"><span class="eli-tag">Explain like I'm new</span>
 Ravi lived in Mumbai, then moved to Pune. You have 2023 sales (Mumbai) and 2024 sales (Pune). If someone asks "how much did Mumbai sell in 2023?", do your records still say Ravi was in Mumbai back then — or did moving him to Pune silently rewrite the past? SCD is the set of strategies for handling exactly this.
@@ -69,7 +69,16 @@ Add a `previous_city` column. You can see the current *and* one prior value, but
 | 6 | full + current | hybrid | advanced reporting needs |
 
 ## How SCD Type 2 is implemented (the MERGE)
-In SQL/Spark you typically run a **MERGE** (upsert): expire the old current row and insert a new one when an attribute changes.
+In SQL/Spark you typically run a **MERGE** (upsert): when an attribute changes, expire the old current row and insert a new one.
+
+<div class="flow flow-row">
+  <div class="flow-node"><strong>Match</strong><span>current row by key</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Expire</strong><span>is_current=false, set end_date</span></div>
+  <div class="flow-link"><i data-ic="arrowRight" class="ic-sm"></i></div>
+  <div class="flow-node"><strong>Insert</strong><span>new current version</span></div>
+</div>
+
 ```sql
 -- Simplified SCD2 logic
 MERGE INTO dim_customer AS tgt

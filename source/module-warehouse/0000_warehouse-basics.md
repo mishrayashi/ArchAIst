@@ -28,13 +28,15 @@ Analytical queries usually touch *a few columns across millions of rows*. **Colu
 <div class="widget-mount" data-widget="columnar"></div>
 
 ## MPP — Massively Parallel Processing
-Warehouses like Redshift/BigQuery/Snowflake split work across many nodes that each handle a slice of the data, then combine results. That's how they query terabytes in seconds. The key design implication for *you*: distribute data well and minimise data shuffling between nodes (same idea as Spark).
+Warehouses like Redshift, BigQuery, and Snowflake split work across many nodes that each handle a slice of the data, then combine results — that's how they query terabytes in seconds. The design implication for *you*: distribute data well and minimise shuffling between nodes (same idea as Spark).
 
 ## Key vendor concepts
-- **Snowflake:** separates *storage* from *compute* — independent "virtual warehouses" (compute clusters) scale up/down per workload; you pay for compute by the second. Loved for ease of use.
-- **BigQuery (GCP):** serverless — no clusters to manage; you're billed mainly by **bytes scanned**, so partitioning/clustering and selecting few columns directly saves money.
-- **Redshift (AWS):** node-based MPP; performance depends on good **distribution keys** and **sort keys**.
-- **Databricks + Delta Lake:** the lakehouse — Spark + a transactional table layer (ACID, time travel, MERGE) over your lake files.
+<div class="feat-grid">
+  <div class="feat"><span class="feat-ic"><i data-ic="database"></i></span><div><strong>Snowflake</strong><p>Separates storage from compute — independent virtual warehouses scale per workload; you pay for compute by the second.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="chart"></i></span><div><strong>BigQuery (GCP)</strong><p>Serverless — no clusters to manage; billed mainly by <strong>bytes scanned</strong>, so partitioning and reading few columns saves money.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="cube"></i></span><div><strong>Redshift (AWS)</strong><p>Node-based MPP; performance depends on good <strong>distribution keys</strong> and <strong>sort keys</strong>.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="layers"></i></span><div><strong>Databricks + Delta Lake</strong><p>The lakehouse — Spark plus a transactional table layer (ACID, time travel, MERGE) over your lake files.</p></div></div>
+</div>
 
 ## Designing for performance & cost
 - **Partitioning:** physically split a table by a column (usually **date**) so queries prune to relevant partitions.

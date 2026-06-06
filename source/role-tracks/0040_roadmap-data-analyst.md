@@ -7,7 +7,7 @@ minutes: 6
 tags: roadmap, data analyst
 ---
 
-The Data Analyst explains what already happened using SQL, dashboards and charts. It's one of the most accessible entry points into the data world — and a great springboard toward Data Engineer later.
+If you're looking for the friendliest way into the data world, this is it. A Data Analyst tells the story of what already happened using SQL, dashboards and charts — and it's one of the most accessible first jobs in tech, with a clear springboard toward Data Engineer later if you want it. Start here, rack up small wins, and let your confidence build. Everyone in data started somewhere — this is a great somewhere.
 
 ## Phase 1 — Data & spreadsheet basics
 Understand what data is and get comfortable with Excel/Sheets.

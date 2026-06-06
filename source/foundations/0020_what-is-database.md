@@ -15,7 +15,7 @@ Think of a giant, magical library. A <strong>spreadsheet</strong> is a single no
 
 ## Two big families of databases
 
-**1. SQL / Relational databases** — data lives in **tables** with strict columns. They are related to each other (hence "relational"). Examples: **PostgreSQL, MySQL, SQL Server, Oracle**. You talk to them with a language called **SQL**.
+**1. SQL / Relational databases** — data lives in **tables** with strict columns, and tables relate to each other (hence "relational"). You talk to them with a language called **SQL**. Examples: **PostgreSQL, MySQL, SQL Server, Oracle**.
 
 **2. NoSQL databases** — more flexible shapes, built for huge scale or special needs. Examples: **MongoDB** (documents), **Redis** (key-value, super fast), **Cassandra** (massive scale).
 
@@ -64,9 +64,11 @@ Don't worry about memorising this yet — there's a full **SQL module** later. T
 
 Almost everything is one of these four:
 
-- **C**reate — add new data (`INSERT`)
-- **R**ead — look at data (`SELECT`)  ← you'll do this 90% of the time
-- **U**pdate — change existing data (`UPDATE`)
-- **D**elete — remove data (`DELETE`)
+<div class="feat-grid">
+  <div class="feat"><span class="feat-ic"><i data-ic="sparkles"></i></span><div><strong>Create (INSERT)</strong><p>Add new data.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="search"></i></span><div><strong>Read (SELECT)</strong><p>Look at data — you'll do this 90% of the time.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="refresh"></i></span><div><strong>Update (UPDATE)</strong><p>Change existing data.</p></div></div>
+  <div class="feat"><span class="feat-ic"><i data-ic="zap"></i></span><div><strong>Delete (DELETE)</strong><p>Remove data.</p></div></div>
+</div>
 
 > **Key takeaway:** A database safely stores data; **SQL** is the friendly language you use to ask it questions. Master SQL and half the field opens up to you.

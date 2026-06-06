@@ -32,21 +32,16 @@ Plot any role on two questions:
 1. **Do you build systems, or produce insights?** (Engineering vs Analysis/Science)
 2. **Do you work with classic data, or AI/models?** (Data platform vs AI/ML)
 
-```text
-                 BUILD SYSTEMS (engineering)
-                          ▲
-        Data Engineer     │   AI Data Engineer
-        (pipelines,       │   ML / AI Engineer
-         warehouses)      │   GenAI / LLM Engineer
-                          │
-  CLASSIC DATA ◀──────────┼──────────▶ AI / MODELS
-                          │
-        Data Analyst      │   Data Scientist
-        (dashboards,      │   (statistics, modelling,
-         reporting)       │    experiments)
-                          ▼
-                 PRODUCE INSIGHTS (analysis/science)
-```
+<div class="quadrant" aria-label="Roles plotted on two axes: build vs insight, and classic data vs AI">
+  <span class="q-ax q-ax-t">Build systems · engineering</span>
+  <span class="q-ax q-ax-b">Produce insights · analysis &amp; science</span>
+  <span class="q-ax q-ax-l">Classic data</span>
+  <span class="q-ax q-ax-r">AI / models</span>
+  <div class="q-cell"><strong>Data Engineer</strong><span>pipelines · warehouses</span></div>
+  <div class="q-cell"><strong>AI Data · ML · GenAI · LLM Engineer</strong><span>data &amp; models in production</span></div>
+  <div class="q-cell"><strong>Data Analyst</strong><span>dashboards · reporting</span></div>
+  <div class="q-cell"><strong>Data Scientist</strong><span>statistics · experiments</span></div>
+</div>
 
 ## Which should *you* aim for?
 

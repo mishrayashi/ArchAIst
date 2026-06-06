@@ -7,7 +7,7 @@ minutes: 10
 tags: roadmap, data engineer
 ---
 
-A complete, ordered path. Each phase links to the modules in this academy. Don't jump ahead — each phase builds on the last.
+Here's the whole journey in one place — from your very first line of Python to walking into interviews as a job-ready Data Engineer. Thousands have made it along this exact path, and you can too. Take it one phase at a time: each one quietly sets up the next, so trust the order and resist the urge to skip ahead. Every step links to the precise lessons to study, so you'll never be left wondering what to do next.
 
 ## Phase 1 — Foundations (Weeks 1–4)
 - Finish the **Foundations** section here (you may already have).
